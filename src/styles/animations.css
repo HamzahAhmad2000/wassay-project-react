@@ -1,0 +1,227 @@
+:root {
+  /* Animation durations */
+  --transition-fast: 150ms;
+  --transition-normal: 250ms;
+  --transition-slow: 350ms;
+  
+  /* Easing functions */
+  --ease-out: cubic-bezier(0.0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth transitions for interactive elements */
+.modern-button {
+  transition: all var(--transition-fast) var(--ease-out);
+}
+
+.modern-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(98, 87, 165, 0.3);
+}
+
+.modern-button:active {
+  transform: translateY(0);
+  transition-duration: var(--transition-fast);
+}
+
+.modern-button:disabled {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Card animations */
+.modern-card {
+  transition: all var(--transition-normal) var(--ease-out);
+}
+
+.modern-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Input focus animations */
+.modern-input {
+  transition: all var(--transition-fast) var(--ease-in-out);
+}
+
+.modern-input:focus {
+  transform: scale(1.02);
+  transition-duration: var(--transition-fast);
+}
+
+/* Table row animations */
+.modern-table-row {
+  transition: all var(--transition-fast) var(--ease-out);
+}
+
+.modern-table-row:hover {
+  transform: scale(1.01);
+}
+
+/* Loading animations */
+@keyframes modern-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.modern-loading {
+  animation: modern-spin 1s linear infinite;
+}
+
+@keyframes modern-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.modern-pulse {
+  animation: modern-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Fade in animations */
+@keyframes modern-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modern-fade-in {
+  animation: modern-fade-in var(--transition-normal) var(--ease-out);
+}
+
+/* Skeleton loading animations */
+@keyframes modern-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.modern-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-100) 25%,
+    var(--color-primary-200) 50%,
+    var(--color-primary-100) 75%
+  );
+  background-size: 200px 100%;
+  animation: modern-shimmer 1.5s infinite;
+}
+
+/* Expandable row animations */
+.modern-expandable {
+  transition: all var(--transition-normal) var(--ease-out);
+  overflow: hidden;
+}
+
+.modern-expandable-enter {
+  max-height: 0;
+  opacity: 0;
+}
+
+.modern-expandable-enter-active {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.modern-expandable-exit {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.modern-expandable-exit-active {
+  max-height: 0;
+  opacity: 0;
+}
+
+/* Focus ring animations */
+.modern-focus-ring:focus {
+  outline: 2px solid var(--color-tertiary-500);
+  outline-offset: 2px;
+  transition: outline var(--transition-fast) var(--ease-out);
+}
+
+/* Hover scale animations */
+.modern-hover-scale {
+  transition: transform var(--transition-fast) var(--ease-out);
+}
+
+.modern-hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.modern-hover-scale:active {
+  transform: scale(0.98);
+}
+
+/* Notification animations */
+@keyframes modern-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.modern-notification {
+  animation: modern-slide-in var(--transition-normal) var(--ease-out);
+}
+
+/* Responsive animations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High performance animations */
+.modern-performance {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Loading state animations */
+.modern-loading-dots {
+  display: inline-block;
+}
+
+.modern-loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60% {
+    content: '...';
+  }
+  80%, 100% {
+    content: '';
+  }
+}

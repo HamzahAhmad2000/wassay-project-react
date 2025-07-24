@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Origin UI Test</title>
+    <style>
+        /* Import our color scheme */
+        :root {
+            --color-primary-50: #dddce4;
+            --color-primary-100: #c6c6cc;
+            --color-primary-200: #eaeaea;
+            --color-secondary-800: #0f122b;
+            --color-secondary-900: #101023;
+            --color-tertiary-400: #938bc3;
+            --color-tertiary-500: #6257a5;
+            --color-tertiary-600: #423e7f;
+            --color-tertiary-700: #201b50;
+        }
+        
+        .origin-card {
+            background-color: var(--color-primary-200);
+            color: var(--color-secondary-900);
+            border: 1px solid var(--color-primary-100);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .origin-button-primary {
+            background-color: var(--color-tertiary-500);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .origin-button-primary:hover {
+            background-color: var(--color-tertiary-600);
+        }
+    </style>
+</head>
+<body style="background-color: var(--color-primary-50); padding: 20px; font-family: system-ui;">
+    <div class="origin-card">
+        <h2>Origin UI Foundation Test</h2>
+        <p>This card uses our custom color scheme:</p>
+        <ul>
+            <li>Background: Primary-200 (#eaeaea)</li>
+            <li>Text: Secondary-900 (#101023)</li>
+            <li>Border: Primary-100 (#c6c6cc)</li>
+        </ul>
+        <button class="origin-button-primary">Primary Button (Tertiary-500)</button>
+    </div>
+</body>
+</html>

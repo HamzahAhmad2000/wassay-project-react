@@ -1,0 +1,15 @@
+{
+    // "files": [],
+    "references": [],
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "ESNext",
+      "moduleResolution": "Bundler",
+      "jsx": "react-jsx",
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["src/*"]
+      }
+    }
+  }
+  

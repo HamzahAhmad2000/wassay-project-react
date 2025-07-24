@@ -1,0 +1,99 @@
+/* General Table Container Styling */
+.company-page {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .page-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  /* Table Styling */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .styled-table th,
+  .styled-table td {
+    padding: 12px 15px;
+  }
+  
+  .styled-table th {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+  
+  .styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+  }
+  
+  .styled-table tbody tr:nth-of-type(odd) {
+    background-color: #ffffff;
+  }
+  
+  .styled-table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+  
+  /* Logo Styling */
+  .company-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border-radius: 5px;
+  }
+  
+
+/* Action Buttons */
+.action-button {
+    padding: 8px 12px;
+    margin: 2px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .update-button {
+    background-color: #4caf50; /* Green for update */
+  }
+  
+  .update-button:hover {
+    background-color: #45a049;
+  }
+  
+  .add-button {
+    background-color: #4cafff; /* Green for update */
+  }
+  
+  .add-button:hover {
+    background-color: #45a0ff;
+  }
+  
+  .delete-button {
+    background-color: #f44336; /* Red for delete */
+  }
+  
+  .delete-button:hover {
+    background-color: #d32f2f;
+  }

@@ -1,0 +1,242 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+.sidebar-btn {
+  @apply block w-full p-3 rounded-lg text-white font-bold bg-blue-600 hover:bg-blue-500 transition;
+}
+
+.add-btn {
+  @apply flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white hover:bg-blue-400 transition;
+}
+
+.logout-btn {
+  @apply  p-2 rounded-lg bg-red-500 text-white  hover:bg-red-600 transition;
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Origin UI Utility Classes for Consistent Theming */
+.origin-card {
+  @apply bg-card text-card-foreground border border-border rounded-lg shadow-sm;
+}
+
+.origin-button-primary {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md px-4 py-2 font-medium transition-colors;
+}
+
+.origin-button-secondary {
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md px-4 py-2 font-medium transition-colors;
+}
+
+.origin-input {
+  @apply bg-input border border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md px-3 py-2 transition-colors;
+}
+
+.origin-text-primary {
+  @apply text-foreground;
+}
+
+.origin-text-secondary {
+  @apply text-muted-foreground;
+}
+
+.origin-bg-primary {
+  @apply bg-background;
+}
+
+.origin-bg-secondary {
+  @apply bg-muted;
+}
+
+.origin-border {
+  @apply border-border;
+}
+
+.origin-accent {
+  @apply bg-accent text-accent-foreground;
+}
+
+:root {
+  /* Origin UI Custom Color Scheme */
+  /* Primary Colors - Backgrounds and neutral elements */
+  --color-primary-50: #dddce4;
+  --color-primary-100: #c6c6cc;
+  --color-primary-200: #eaeaea;
+  
+  /* Secondary Colors - Text and contrasting elements */
+  --color-secondary-800: #0f122b;
+  --color-secondary-900: #101023;
+  
+  /* Tertiary Colors - Interactive and accent elements */
+  --color-tertiary-400: #938bc3;
+  --color-tertiary-500: #6257a5;
+  --color-tertiary-600: #423e7f;
+  --color-tertiary-700: #201b50;
+
+  /* Updated design system variables using new color scheme */
+  --background: hsl(0 0% 100%);
+  --foreground: var(--color-secondary-900);
+
+  --card: var(--color-primary-200);
+  --card-foreground: var(--color-secondary-900);
+
+  --popover: var(--color-primary-200);
+  --popover-foreground: var(--color-secondary-900);
+
+  --primary: var(--color-tertiary-500);
+  --primary-foreground: hsl(0 0% 98%);
+
+  --secondary: var(--color-primary-100);
+  --secondary-foreground: var(--color-secondary-900);
+
+  --muted: var(--color-primary-50);
+  --muted-foreground: var(--color-secondary-800);
+
+  --accent: var(--color-tertiary-400);
+  --accent-foreground: var(--color-secondary-900);
+
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(0 0% 98%);
+
+  --border: var(--color-primary-100);
+  --input: var(--color-primary-50);
+  --ring: var(--color-tertiary-500);
+
+  --chart-1: var(--color-tertiary-500);
+  --chart-2: var(--color-tertiary-400);
+  --chart-3: var(--color-tertiary-600);
+  --chart-4: var(--color-tertiary-700);
+  --chart-5: var(--color-secondary-800);
+
+  --radius: 0.6rem;
+
+  --sidebar: var(--color-primary-200);
+  --sidebar-foreground: var(--color-secondary-900);
+  --sidebar-primary: var(--color-tertiary-500);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: var(--color-primary-100);
+  --sidebar-accent-foreground: var(--color-secondary-900);
+  --sidebar-border: var(--color-primary-100);
+  --sidebar-ring: var(--color-tertiary-500);
+}
+
+.dark {
+  /* Dark mode using inverted color scheme */
+  --background: var(--color-secondary-900);
+  --foreground: var(--color-primary-200);
+
+  --card: var(--color-secondary-800);
+  --card-foreground: var(--color-primary-200);
+
+  --popover: var(--color-secondary-800);
+  --popover-foreground: var(--color-primary-200);
+
+  --primary: var(--color-tertiary-400);
+  --primary-foreground: var(--color-secondary-900);
+
+  --secondary: var(--color-tertiary-700);
+  --secondary-foreground: var(--color-primary-200);
+
+  --muted: var(--color-tertiary-600);
+  --muted-foreground: var(--color-primary-100);
+
+  --accent: var(--color-tertiary-500);
+  --accent-foreground: var(--color-primary-200);
+
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(0 0% 98%);
+
+  --border: var(--color-tertiary-600);
+  --input: var(--color-tertiary-700);
+  --ring: var(--color-tertiary-400);
+
+  --chart-1: var(--color-tertiary-400);
+  --chart-2: var(--color-tertiary-500);
+  --chart-3: var(--color-tertiary-600);
+  --chart-4: var(--color-primary-100);
+  --chart-5: var(--color-primary-50);
+
+  --sidebar: var(--color-secondary-900);
+  --sidebar-foreground: var(--color-primary-200);
+  --sidebar-primary: var(--color-tertiary-500);
+  --sidebar-primary-foreground: var(--color-primary-200);
+  --sidebar-accent: var(--color-tertiary-700);
+  --sidebar-accent-foreground: var(--color-primary-200);
+  --sidebar-border: var(--color-tertiary-600);
+  --sidebar-ring: var(--color-tertiary-400);
+}
+
+@theme inline {
+  /* Origin UI Custom Color Scheme Variables */
+  --color-primary-50: var(--color-primary-50);
+  --color-primary-100: var(--color-primary-100);
+  --color-primary-200: var(--color-primary-200);
+  
+  --color-secondary-800: var(--color-secondary-800);
+  --color-secondary-900: var(--color-secondary-900);
+  
+  --color-tertiary-400: var(--color-tertiary-400);
+  --color-tertiary-500: var(--color-tertiary-500);
+  --color-tertiary-600: var(--color-tertiary-600);
+  --color-tertiary-700: var(--color-tertiary-700);
+
+  /* Design System Variables */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
