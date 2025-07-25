@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { postInventory } from "/src/APIs/ProductAPIs";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
 
 const InventoryForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -19,7 +23,6 @@ const InventoryForm = ({ mode = "add" }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,46 +54,78 @@ const InventoryForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Inventory" : "Edit Inventory"}</h2>
-      <form className="category-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Product Name:</label>
-          <input
-            type="text"
-            value={`${formData.product_name} - ID(${formData.product_id})`}
-            className="form-input"
-            disabled
-          />
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Inventory" : "Edit Inventory"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="product_name" className="text-[#101023] font-medium">
+                  Product Name:
+                </Label>
+                <Input
+                  id="product_name"
+                  type="text"
+                  value={`${formData.product_name} - ID(${formData.product_id})`}
+                  className="w-full"
+                  disabled
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Manufacturing Date:</label>
-          <input
-            value={formData.manufacturing_date}
-            onChange={(e) => {setFormData({ ...formData, manufacturing_date: e.target.value })}}
-            className="form-input"
-            type="date"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="manufacturing_date" className="text-[#101023] font-medium">
+                  Manufacturing Date:
+                </Label>
+                <Input
+                  id="manufacturing_date"
+                  type="date"
+                  value={formData.manufacturing_date}
+                  onChange={(e) => {setFormData({ ...formData, manufacturing_date: e.target.value })}}
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Expiry Date:</label>
-          <input
-            value={formData.expiry_date}
-            onChange={(e) => {setFormData({ ...formData, expiry_date: e.target.value })}}
-            className="form-input"
-            type="date"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="expiry_date" className="text-[#101023] font-medium">
+                  Expiry Date:
+                </Label>
+                <Input
+                  id="expiry_date"
+                  type="date"
+                  value={formData.expiry_date}
+                  onChange={(e) => {setFormData({ ...formData, expiry_date: e.target.value })}}
+                  className="w-full"
+                />
+              </div>
 
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
 
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Inventory" : "Update Inventory"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/inventory")}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Inventory" : "Update Inventory"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

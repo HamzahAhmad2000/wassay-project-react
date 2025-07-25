@@ -39,35 +39,44 @@ export default function YearOverYearSales() {
 
     }, [])
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md my-4">
-            <h2 className="text-lg font-semibold text-gray-700">Year-over-Year Sales</h2>
-
-            {/* Sales Comparison Section */}
-            <div className="flex justify-between items-center mt-4">
-                <div className="flex flex-col">
-                    <p className="text-gray-500">Current Year ({salesData.current_year}):</p>
-                    <p className="text-2xl font-bold text-gray-800">${salesData.current_sales.toLocaleString()}</p>
+        <div className="origin-ui-background p-6 rounded-lg shadow-md my-4">
+            <h2 className="text-lg font-semibold origin-ui-text" style={{ color: 'var(--color-tertiary-700)' }}>Year-over-Year Sales</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div className="text-center">
+                    <p className="text-sm origin-ui-text">Previous Year ({salesData.previous_year})</p>
+                    <p className="text-2xl font-bold origin-ui-text" style={{ color: 'var(--color-tertiary-600)' }}>
+                        ${salesData.previous_sales?.toLocaleString()}
+                    </p>
                 </div>
-                <div className="flex flex-col text-right">
-                    <p className="text-gray-500">Previous Year ({salesData.previous_year}):</p>
-                    <p className="text-2xl font-bold text-gray-600">${salesData.previous_sales.toLocaleString()}</p>
+                <div className="text-center">
+                    <p className="text-sm origin-ui-text">Current Year ({salesData.current_year})</p>
+                    <p className="text-2xl font-bold origin-ui-text" style={{ color: 'var(--color-tertiary-600)' }}>
+                        ${salesData.current_sales?.toLocaleString()}
+                    </p>
+                </div>
+            </div>
+            
+            <div className="mt-4 text-center">
+                <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    isGrowth ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}>
+                    {isGrowth ? <ArrowUp className="w-4 h-4 mr-1" /> : <ArrowDown className="w-4 h-4 mr-1" />}
+                    {Math.abs(growthRate).toFixed(1)}% {isGrowth ? 'Growth' : 'Decline'}
                 </div>
             </div>
 
-            {/* Growth Percentage */}
-            <div className={`flex items-center gap-2 mt-2 ${isGrowth ? "text-green-600" : "text-red-500"}`}>
-                {isGrowth ? <ArrowUp className="w-5 h-5" /> : <ArrowDown className="w-5 h-5" />}
-                <p className="text-lg font-semibold">{growthRate.toFixed(2)}%</p>
-            </div>
-
-            {/* Sales Bar Chart */}
+            {/* Bar Chart */}
             <div className="mt-6">
-                <ResponsiveContainer width="100%" height={250}>
-                    <BarChart data={salesData}>
+                <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={[
+                        { year: salesData.previous_year, sales: salesData.previous_sales },
+                        { year: salesData.current_year, sales: salesData.current_sales }
+                    ]}>
                         <XAxis dataKey="year" />
                         <YAxis />
-                        <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
-                        <Bar dataKey="sales" fill="#4CAF50" name="Sales" />
+                        <Tooltip />
+                        <Bar dataKey="sales" fill="var(--color-tertiary-600)" />
                     </BarChart>
                 </ResponsiveContainer>
             </div>

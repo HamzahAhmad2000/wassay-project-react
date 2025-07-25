@@ -6,6 +6,11 @@ import PropTypes from 'prop-types';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getCompanies, postLPR } from "/src/APIs/CompanyAPIs";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const LPRForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -68,9 +73,8 @@ const LPRForm = ({ mode = "add" }) => {
     return true;
   };
 
-  const handleChange = async (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   }
 
   const handleSubmit = async (e) => {
@@ -101,197 +105,217 @@ const LPRForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Loyalty Point Rules" : "Edit Loyalty Point Rules"}</h2>
-      <form onSubmit={handleSubmit} className="LPR-form">
-        {user && user.is_superuser && (
-          <div className="form-group">
-            <label>Company:</label>
-            <select
-              type="text"
-              value={formData.company}
-              onChange={handleChange}
-              name="company"
-              required
-              className="form-input"
-            >
-              <option value={""}>Select a Company</option>
-              {companies.length > 0 && companies.map((company)=> (
-                <option key={company.id} value={company.id}>{company.name}</option>
-              ))}
-            </select>
-          </div>
-        )}
-        
-        <div className="form-group">
-          <label>Spending Rs. 1000 gets you :</label>
-          <input
-            value={formData.for_every_1000_spend_LP}
-            onChange={handleChange}
-            name={'for_every_1000_spend_LP'}
-            className="form-input"
-            placeholder="100"
-            type="number"
-            min="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Redeeming 1000 LP Gives you:</label>
-          <input
-            type="number"
-            value={formData.for_every_1000_LP_CB}
-            onChange={handleChange}
-            name="for_every_1000_LP_CB"
-            placeholder="100"
-            className="form-input"
-            min="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Max Discount Allowed:</label>
-          <input 
-            value={formData.max_discount}
-            onChange={handleChange}
-            required
-            type="number"
-            name='max_discount'
-            className="form-input"
-            min="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Expires After:</label>
-          <input 
-            value={formData.expire_after}
-            onChange={handleChange}
-            type="number"
-            name='expire_after'
-            className="form-input"
-            min="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Signup Bonus:</label>
-          <input 
-            value={formData.sign_up_bonus}
-            onChange={handleChange}
-            type="number"
-            name='sign_up_bonus'
-            className="form-input"
-            min="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Birthday Discount:</label>
-          <input 
-            value={formData.birthday_discount}
-            onChange={handleChange}
-            type="number"
-            name='birthday_discount'
-            className="form-input"
-            min="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Flash Sale Discount:</label>
-          <input 
-            value={formData.flash_sale_discount}
-            onChange={handleChange}
-            type="number"
-            name='flash_sale_discount'
-            className="form-input"
-            min="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Milestone Purchase Count:</label>
-          <input 
-            value={formData.milestone_purchase_count}
-            onChange={handleChange}
-            type="number"
-            name='milestone_purchase_count'
-            className="form-input"
-            min="0"
-            defaultValue="10"
-          />
-        </div>
-        <div className="form-group">
-          <label>Milestone Spend Amount:</label>
-          <input 
-            value={formData.milestone_spend_amount}
-            onChange={handleChange}
-            type="number"
-            name='milestone_spend_amount'
-            className="form-input"
-            min="0"
-            defaultValue="500.0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Milestone Gift Amount:</label>
-          <input 
-            value={formData.milestone_gift_amount}
-            onChange={handleChange}
-            type="number"
-            name='milestone_gift_amount'
-            className="form-input"
-            min="0"
-            defaultValue="10.0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Monthly Purchase Milestone:</label>
-          <input 
-            value={formData.monthly_purchase_milestone}
-            onChange={handleChange}
-            type="number"
-            name='monthly_purchase_milestone'
-            className="form-input"
-            min="0"
-            defaultValue="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Yearly Purchase Milestone:</label>
-          <input 
-            value={formData.yearly_purchase_milestone}
-            onChange={handleChange}
-            type="number"
-            name='yearly_purchase_milestone'
-            className="form-input"
-            min="0"
-            defaultValue="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Monthly Purchase Milestone Points:</label>
-          <input 
-            value={formData.monthly_purchase_milestone_points}
-            onChange={handleChange}
-            type="number"
-            name='monthly_purchase_milestone_points'
-            className="form-input"
-            min="0"
-            defaultValue="0"
-          />
-        </div>
-        <div className="form-group">
-          <label>Yearly Purchase Milestone Points:</label>
-          <input 
-            value={formData.yearly_purchase_milestone_points}
-            onChange={handleChange}
-            type="number"
-            name='yearly_purchase_milestone_points'
-            className="form-input"
-            min="0"
-            defaultValue="0"
-          />
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Loyalty Point Rules" : "Edit Loyalty Point Rules"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <Select value={formData.company} onValueChange={(value) => handleChange("company", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.length > 0 && companies.map((company)=> (
+                        <SelectItem key={company.id} value={company.id}>{company.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              
+              <div className="space-y-2">
+                <Label htmlFor="for_every_1000_spend_LP" className="text-[#101023] font-medium">Spending Rs. 1000 gets you</Label>
+                <Input
+                  id="for_every_1000_spend_LP"
+                  value={formData.for_every_1000_spend_LP}
+                  onChange={(e) => handleChange("for_every_1000_spend_LP", e.target.value)}
+                  placeholder="100"
+                  type="number"
+                  min="0"
+                  className="w-full"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="for_every_1000_LP_CB" className="text-[#101023] font-medium">Redeeming 1000 LP Gives you</Label>
+                <Input
+                  id="for_every_1000_LP_CB"
+                  type="number"
+                  value={formData.for_every_1000_LP_CB}
+                  onChange={(e) => handleChange("for_every_1000_LP_CB", e.target.value)}
+                  placeholder="100"
+                  className="w-full"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="max_discount" className="text-[#101023] font-medium">Max Discount Allowed</Label>
+                <Input 
+                  id="max_discount"
+                  value={formData.max_discount}
+                  onChange={(e) => handleChange("max_discount", e.target.value)}
+                  required
+                  type="number"
+                  className="w-full"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="expire_after" className="text-[#101023] font-medium">Expires After</Label>
+                <Input 
+                  id="expire_after"
+                  value={formData.expire_after}
+                  onChange={(e) => handleChange("expire_after", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="sign_up_bonus" className="text-[#101023] font-medium">Signup Bonus</Label>
+                <Input 
+                  id="sign_up_bonus"
+                  value={formData.sign_up_bonus}
+                  onChange={(e) => handleChange("sign_up_bonus", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="birthday_discount" className="text-[#101023] font-medium">Birthday Discount</Label>
+                <Input 
+                  id="birthday_discount"
+                  value={formData.birthday_discount}
+                  onChange={(e) => handleChange("birthday_discount", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="flash_sale_discount" className="text-[#101023] font-medium">Flash Sale Discount</Label>
+                <Input 
+                  id="flash_sale_discount"
+                  value={formData.flash_sale_discount}
+                  onChange={(e) => handleChange("flash_sale_discount", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="milestone_purchase_count" className="text-[#101023] font-medium">Milestone Purchase Count</Label>
+                <Input 
+                  id="milestone_purchase_count"
+                  value={formData.milestone_purchase_count}
+                  onChange={(e) => handleChange("milestone_purchase_count", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                  defaultValue="10"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="milestone_spend_amount" className="text-[#101023] font-medium">Milestone Spend Amount</Label>
+                <Input 
+                  id="milestone_spend_amount"
+                  value={formData.milestone_spend_amount}
+                  onChange={(e) => handleChange("milestone_spend_amount", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                  defaultValue="500.0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="milestone_gift_amount" className="text-[#101023] font-medium">Milestone Gift Amount</Label>
+                <Input 
+                  id="milestone_gift_amount"
+                  value={formData.milestone_gift_amount}
+                  onChange={(e) => handleChange("milestone_gift_amount", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                  defaultValue="10.0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="monthly_purchase_milestone" className="text-[#101023] font-medium">Monthly Purchase Milestone</Label>
+                <Input 
+                  id="monthly_purchase_milestone"
+                  value={formData.monthly_purchase_milestone}
+                  onChange={(e) => handleChange("monthly_purchase_milestone", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                  defaultValue="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="yearly_purchase_milestone" className="text-[#101023] font-medium">Yearly Purchase Milestone</Label>
+                <Input 
+                  id="yearly_purchase_milestone"
+                  value={formData.yearly_purchase_milestone}
+                  onChange={(e) => handleChange("yearly_purchase_milestone", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                  defaultValue="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="monthly_purchase_milestone_points" className="text-[#101023] font-medium">Monthly Purchase Milestone Points</Label>
+                <Input 
+                  id="monthly_purchase_milestone_points"
+                  value={formData.monthly_purchase_milestone_points}
+                  onChange={(e) => handleChange("monthly_purchase_milestone_points", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                  defaultValue="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="yearly_purchase_milestone_points" className="text-[#101023] font-medium">Yearly Purchase Milestone Points</Label>
+                <Input 
+                  id="yearly_purchase_milestone_points"
+                  value={formData.yearly_purchase_milestone_points}
+                  onChange={(e) => handleChange("yearly_purchase_milestone_points", e.target.value)}
+                  type="number"
+                  className="w-full"
+                  min="0"
+                  defaultValue="0"
+                />
+              </div>
 
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Loyalty Point Rules" : "Update Loyalty Point Rules"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/LPRs')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Loyalty Point Rules" : "Update Loyalty Point Rules"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

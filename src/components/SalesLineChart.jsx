@@ -60,39 +60,83 @@ const SalesLineChart = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">Sales Trend</h2>
+    <div className="origin-ui-background p-6 rounded-lg shadow-md max-w-4xl mx-auto">
+      <h2 className="text-2xl font-bold text-center origin-ui-text mb-6" style={{ color: 'var(--color-tertiary-700)' }}>
+        Sales Line Chart
+      </h2>
 
-      {/* Error Message */}
-      {error && <p className="text-red-600 text-center mb-2">{error}</p>}
-
-      {/* Date Pickers */}
-      <div className="flex justify-center gap-4 mb-4">
-        <input
-          type="date"
-          className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-        />
-        <input
-          type="date"
-          className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-        />
+      {/* Date Range Controls */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <label className="text-sm font-medium origin-ui-text">Start Date:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="px-3 py-2 border border-border rounded-md origin-input focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          />
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <label className="text-sm font-medium origin-ui-text">End Date:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="px-3 py-2 border border-border rounded-md origin-input focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          />
+        </div>
       </div>
 
+      {/* Error Display */}
+      {error && (
+        <div className="text-red-500 text-center mb-4 p-3 bg-red-50 rounded-md">
+          {error}
+        </div>
+      )}
+
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={data} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" tick={{ fontSize: 12 }} angle={-30} textAnchor="end" />
-          <YAxis tick={{ fontSize: 12 }} />
-          <Tooltip contentStyle={{ backgroundColor: "white", borderRadius: "5px" }} />
-          <Legend />
-          <Line type="monotone" dataKey="sales" stroke="green" strokeWidth={3} dot={{ r: 4 }} />
-        </LineChart>
-      </ResponsiveContainer>
+      {data.length > 0 && (
+        <div className="origin-ui-background p-4 rounded-lg">
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-primary-100)" />
+              <XAxis 
+                dataKey="date" 
+                tick={{ fill: 'var(--color-secondary-900)' }}
+                axisLine={{ stroke: 'var(--color-primary-100)' }}
+              />
+              <YAxis 
+                tick={{ fill: 'var(--color-secondary-900)' }}
+                axisLine={{ stroke: 'var(--color-primary-100)' }}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'var(--color-primary-200)', 
+                  border: '1px solid var(--color-primary-100)',
+                  borderRadius: '8px',
+                  color: 'var(--color-secondary-900)'
+                }}
+              />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="sales" 
+                stroke="var(--color-tertiary-600)" 
+                strokeWidth={3}
+                dot={{ fill: 'var(--color-tertiary-600)', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, fill: 'var(--color-tertiary-500)' }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* No Data State */}
+      {data.length === 0 && !error && (
+        <div className="text-center py-8 text-muted-foreground">
+          No sales data available for the selected date range.
+        </div>
+      )}
     </div>
   );
 };

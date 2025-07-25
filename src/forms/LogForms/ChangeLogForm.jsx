@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import { getCategories, getCategoryChildren, postCategory } from "/src/APIs/ProductAPIs";
 import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const ChangeLogForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -87,74 +92,114 @@ const ChangeLogForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Category" : "Edit Category"}</h2>
-      <form className="category-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Category Name:</label>
-          <input
-            type="text"
-            value={categoryName}
-            onChange={(e) => setCategoryName(e.target.value)}
-            className="form-input"
-          />
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Category" : "Edit Category"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="categoryName" className="text-[#101023] font-medium">
+                  Category Name:
+                </Label>
+                <Input
+                  id="categoryName"
+                  type="text"
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Parent Category:</label>
-          <select
-            value={parentCategory}
-            onChange={(e) => {
-              setParentCategory(e.target.value);
-              setSelectedHierarchy([]);
-              handleCategorySelect(0, e.target.value)}}
-            className="form-input"
-          >
-            <option value="">None (Main Category)</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.category_name}
-              </option>
-            ))}
-          </select>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="parentCategory" className="text-[#101023] font-medium">
+                  Parent Category:
+                </Label>
+                <Select 
+                  value={parentCategory} 
+                  onValueChange={(value) => {
+                    setParentCategory(value);
+                    setSelectedHierarchy([]);
+                    handleCategorySelect(0, value);
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="None (Main Category)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.category_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        {selectedHierarchy.map((levelData, index) => (
-          levelData?.subcategories?.length > 0 && (
-            <div className="form-group" key={index}>
-              <label>Subcategory Level {index + 1}:</label>
-              <select
-                value={levelData.selectedId}
-                onChange={(e) => handleCategorySelect(index, e.target.value)}
-                className="form-input"
-              >
-                <option value="">Select a Subcategory</option>
-                {levelData.subcategories.map((sub) => (
-                  <option key={sub.id} value={sub.id}>
-                    {sub.category_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )
-        ))}
+              {selectedHierarchy.map((levelData, index) => (
+                levelData?.subcategories?.length > 0 && (
+                  <div className="space-y-2" key={index}>
+                    <Label htmlFor={`subcategory-${index}`} className="text-[#101023] font-medium">
+                      Subcategory Level {index + 1}:
+                    </Label>
+                    <Select
+                      value={levelData.selectedId}
+                      onValueChange={(value) => handleCategorySelect(index, value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a Subcategory" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {levelData.subcategories.map((sub) => (
+                          <SelectItem key={sub.id} value={sub.id}>
+                            {sub.category_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )
+              ))}
 
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="form-input"
-          ></textarea>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-[#101023] font-medium">
+                  Description:
+                </Label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent"
+                />
+              </div>
 
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
 
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Category" : "Update Category"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/categories")}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Category" : "Update Category"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -4,6 +4,12 @@ import { postCustomerLedgerPayments, getCustomers } from "/src/APIs/CustomerAPIs
 import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Textarea } from "../../additionalOriginuiComponents/ui/textarea";
 
 const CustomerRepayment = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -66,9 +72,8 @@ const CustomerRepayment = ({ mode = "add" }) => {
   }, [navigate, user.id]);
 
   // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // Validate form data
@@ -136,105 +141,122 @@ const CustomerRepayment = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h2 className="form-heading text-2xl font-bold mb-6 text-center">
-        {mode === "add" ? "Add Customer Payment" : "Edit Customer Payment"}
-      </h2>
-      {isFetchingCustomers && <p className="text-center text-gray-500">Loading customers...</p>}
-      {!isFetchingCustomers && customers.length === 0 && (
-        <p className="text-center text-yellow-500">No customers available.</p>
-      )}
-      <form className="customer-form space-y-4" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="block text-sm font-medium text-gray-700">
-            Customer <span className="text-red-500">*</span>
-          </label>
-          <select
-            name="customer"
-            value={formData.customer}
-            onChange={handleChange}
-            className="form-input form-input"
-            required
-            disabled={isFetchingCustomers}
-          >
-            <option value="" disabled>
-              Select a Customer
-            </option>
-            {customers.map((customer) => (
-              <option key={customer.id} value={customer.id}>
-                {customer.first_name} {customer.last_name}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Customer Payment" : "Edit Customer Payment"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isFetchingCustomers && <p className="text-center text-gray-500">Loading customers...</p>}
+            {!isFetchingCustomers && customers.length === 0 && (
+              <p className="text-center text-yellow-500">No customers available.</p>
+            )}
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="customer" className="text-[#101023] font-medium">
+                  Customer <span className="text-red-500">*</span>
+                </Label>
+                <Select 
+                  value={formData.customer} 
+                  onValueChange={(value) => handleChange("customer", value)}
+                  disabled={isFetchingCustomers}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a Customer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.first_name} {customer.last_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="form-group">
-          <label className="block text-sm font-medium text-gray-700">
-            Amount in Cash <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            name="amount_in_cash"
-            value={formData.amount_in_cash}
-            onChange={handleChange}
-            className="form-input form-input"
-            min="0"
-            step="0.01"
-            required
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="amount_in_cash" className="text-[#101023] font-medium">
+                  Amount in Cash <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="amount_in_cash"
+                  type="number"
+                  value={formData.amount_in_cash}
+                  onChange={(e) => handleChange("amount_in_cash", e.target.value)}
+                  className="w-full"
+                  min="0"
+                  step="0.01"
+                  required
+                />
+              </div>
 
-        <div className="form-group">
-          <label className="block text-sm font-medium text-gray-700">
-            Amount in Bank <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            name="amount_in_bank"
-            value={formData.amount_in_bank}
-            onChange={handleChange}
-            className="form-input form-input"
-            min="0"
-            step="0.01"
-            required
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="amount_in_bank" className="text-[#101023] font-medium">
+                  Amount in Bank <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="amount_in_bank"
+                  type="number"
+                  value={formData.amount_in_bank}
+                  onChange={(e) => handleChange("amount_in_bank", e.target.value)}
+                  className="w-full"
+                  min="0"
+                  step="0.01"
+                  required
+                />
+              </div>
 
-        <div className="form-group">
-          <label className="block text-sm font-medium text-gray-700">
-            Repayment Date <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            name="repayment_date"
-            value={formData.repayment_date}
-            onChange={handleChange}
-            className="form-input form-input"
-            required
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="repayment_date" className="text-[#101023] font-medium">
+                  Repayment Date <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="repayment_date"
+                  type="date"
+                  value={formData.repayment_date}
+                  onChange={(e) => handleChange("repayment_date", e.target.value)}
+                  className="w-full"
+                  required
+                />
+              </div>
 
-        <div className="form-group">
-          <label className="block text-sm font-medium text-gray-700">Notes</label>
-          <textarea
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
-            className="form-input form-input"
-            rows="4"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="notes" className="text-[#101023] font-medium">Notes</Label>
+                <Textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => handleChange("notes", e.target.value)}
+                  className="w-full"
+                  rows="4"
+                />
+              </div>
 
-        <button
-          type="submit"
-          className={`submit-button w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-            loading || isFetchingCustomers ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={loading || isFetchingCustomers}
-        >
-          {loading ? "Processing..." : mode === "add" ? "Add Payment" : "Update Payment"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/customer-payments')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading || isFetchingCustomers}
+                  className={`bg-[#423e7f] text-white hover:bg-[#201b50] ${
+                    loading || isFetchingCustomers ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {loading ? "Processing..." : mode === "add" ? "Add Payment" : "Update Payment"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

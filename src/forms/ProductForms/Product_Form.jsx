@@ -6,6 +6,12 @@ import "/src/styles/FormStyles.css";
 import PropTypes from 'prop-types';
 import { toast } from "react-toastify";
 import { getImagePreviewSrc } from "/src/utils/imageUtil";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Checkbox } from "../../additionalOriginuiComponents/ui/checkbox";
 
 const ProductForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -218,204 +224,351 @@ const handleSubmit = async (e) => {
 };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Product" : "Edit Product"}</h2>
-      <form onSubmit={(e) => handleSubmit(e, product)} className="product-form">
-        <div className="form-group">
-          <label>Product Name:</label>
-          <input type="text" name="product_name" value={product.product_name} onChange={handleChange} required className="form-input" />
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Product" : "Edit Product"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={(e) => handleSubmit(e, product)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="product_name" className="text-[#101023] font-medium">Product Name:</Label>
+                  <Input 
+                    type="text" 
+                    name="product_name" 
+                    value={product.product_name} 
+                    onChange={handleChange} 
+                    className="w-full" 
+                  />
+                </div>
 
-        
-        <div className="form-group">
-          <label>Unit:</label>
-          <select name="unit" value={product.unit} onChange={handleChange} className="form-input">
-            <option value="">Select Measuring Unit</option>
-            <option value="gram">Gram</option>
-            <option value="kilogram">Kilogram</option>
-            <option value="liter">Liter</option>
-            <option value="ml">miliLiter</option>
-            <option value="QTY">QTY</option>
-          </select>
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="unit" className="text-[#101023] font-medium">Unit:</Label>
+                  <Select
+                    value={product.unit}
+                    onValueChange={(value) => setProduct(prev => ({...prev, unit: value}))}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Measuring Unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gram">Gram</SelectItem>
+                      <SelectItem value="kilogram">Kilogram</SelectItem>
+                      <SelectItem value="liter">Liter</SelectItem>
+                      <SelectItem value="ml">miliLiter</SelectItem>
+                      <SelectItem value="QTY">QTY</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="category" className="text-[#101023] font-medium">Category:</Label>
+                  <Select
+                    value={product.category || selectedHierarchy[0]?.selectedId || ""}
+                    onValueChange={(value) => {
+                      setSelectedHierarchy([]);
+                      handleCategorySelect(0, value)
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="None (Main Category)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.category_name + " - " + category.id}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-        <div className="form-group">
-          <label>Category:</label>
-          <select
-            value={product.category || selectedHierarchy[0]?.selectedId || ""}
-            onChange={(e) => {
-              setSelectedHierarchy([]);
-              handleCategorySelect(0, e.target.value)
-            }}
-            className="form-input"
-          >
-            <option value="">None (Main Category)</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.category_name + " - " + category.id}
-              </option>
-            ))}
-          </select>
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="brand_name" className="text-[#101023] font-medium">Brand Name:</Label>
+                  <Input 
+                    type="text" 
+                    name="brand_name" 
+                    value={product.brand_name} 
+                    onChange={handleChange} 
+                    className="w-full" 
+                  />
+                </div>
 
-        {selectedHierarchy.map((levelData, index) => (
-          levelData?.subcategories?.length > 0 && (
-            <div className="form-group" key={index}>
-              <label>Subcategory Level {index + 1}:</label>
-              <select
-                value={levelData.selectedId}
-                onChange={(e) => handleCategorySelect(index, e.target.value)}
-                className="form-input"
-              >
-                <option value="">Select a Subcategory</option>
-                {levelData.subcategories.map((sub) => (
-                  <option key={sub.id} value={sub.id}>
-                    {sub.category_name + " - " + sub.id}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )
-        ))}
+                <div className="space-y-2">
+                  <Label htmlFor="sku" className="text-[#101023] font-medium">SKU:</Label>
+                  <Input 
+                    type="text" 
+                    name="sku" 
+                    value={product.sku} 
+                    onChange={handleChange} 
+                    className="w-full" 
+                  />
+                </div>
 
-        <div className="form-group">
-          <label>Brand Name:</label>
-          <input type="text" name="brand_name" value={product.brand_name} onChange={handleChange} className="form-input" />
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="barcode" className="text-[#101023] font-medium">Barcode:</Label>
+                  <Input 
+                    type="text" 
+                    name="barcode" 
+                    value={product.barcode} 
+                    onChange={handleChange} 
+                    className="w-full" 
+                  />
+                </div>
 
-        <div className="form-group">
-          <label>SKU:</label>
-          <input type="text" name="sku" value={product.sku} onChange={handleChange} className="form-input" />
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reorder_level" className="text-[#101023] font-medium">Reorder Level:</Label>
+                  <Input 
+                    type="number" 
+                    name="reorder_level" 
+                    value={product.reorder_level} 
+                    onChange={handleChange} 
+                    className="w-full" 
+                  />
+                </div>
 
-        <div className="form-group">
-          <label>Barcode:</label>
-          <input type="text" name="barcode" value={product.barcode} onChange={handleChange} className="form-input" />
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="restock_quantity" className="text-[#101023] font-medium">Restock Quantity:</Label>
+                  <Input 
+                    type="number" 
+                    name="restock_quantity" 
+                    value={product.restock_quantity} 
+                    onChange={handleChange} 
+                    className="w-full" 
+                  />
+                </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="season" className="text-[#101023] font-medium">Season:</Label>
+                  <Select
+                    value={product.season}
+                    onValueChange={(value) => setProduct(prev => ({...prev, season: value}))}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Season" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Summer">Summer</SelectItem>
+                      <SelectItem value="Winter">Winter</SelectItem>
+                      <SelectItem value="Tropical">Tropical</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea name="description" value={product.description} onChange={handleChange} rows="3" className="form-input" />
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gender" className="text-[#101023] font-medium">Gender:</Label>
+                  <Select
+                    value={product.gender}
+                    onValueChange={(value) => setProduct(prev => ({...prev, gender: value}))}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Unisex">Unisex</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-        <div className="form-group">
-          <label>Reorder Level:</label>
-          <input type="number" name="reorder_level" value={product.reorder_level} onChange={handleChange} className="form-input" />
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="warranty_period" className="text-[#101023] font-medium">Warranty Period (days):</Label>
+                  <Input 
+                    type="number" 
+                    name="warranty_period" 
+                    value={product.warranty_period} 
+                    onChange={handleChange} 
+                    className="w-full" 
+                  />
+                </div>
 
-        <div className="form-group">
-          <label>Restock Quantity:</label>
-          <input type="number" name="restock_quantity" value={product.restock_quantity} onChange={handleChange} className="form-input" />
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="packaging_weight" className="text-[#101023] font-medium">Packaging Weight (grams):</Label>
+                  <Input 
+                    type="number" 
+                    name="packaging_weight" 
+                    value={product.packaging_weight} 
+                    onChange={handleChange} 
+                    className="w-full" 
+                  />
+                </div>
 
-        <div className="form-group">
-          <label>Season:</label>
-          <select name="season" value={product.season} onChange={handleChange} className="form-input">
-            <option value="">Select Season</option>
-            <option value="Summer">Summer</option>
-            <option value="Winter">Winter</option>
-            <option value="Tropical">Tropical</option>
-          </select>
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="packaging_dimensions" className="text-[#101023] font-medium">Packaging Dimensions (L x W x H) (cms):</Label>
+                  <Input 
+                    type="text" 
+                    name="packaging_dimensions" 
+                    value={product.packaging_dimensions} 
+                    onChange={handleChange} 
+                    className="w-full" 
+                  />
+                </div>
+              </div>
 
-        <div className="form-group">
-          <label>Gender:</label>
-          <select name="gender" value={product.gender} onChange={handleChange} className="form-input">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Unisex">Unisex</option>
-          </select>
-        </div>
-        
+              {selectedHierarchy.map((levelData, index) => (
+                levelData?.subcategories?.length > 0 && (
+                  <div className="space-y-2" key={index}>
+                    <Label htmlFor={`subcategory-${index}`} className="text-[#101023] font-medium">
+                      Subcategory Level {index + 1}:
+                    </Label>
+                    <Select
+                      value={levelData.selectedId}
+                      onValueChange={(value) => handleCategorySelect(index, value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a Subcategory" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {levelData.subcategories.map((sub) => (
+                          <SelectItem key={sub.id} value={sub.id}>
+                            {sub.category_name + " - " + sub.id}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )
+              ))}
 
-        <div className="form-group">
-          <label>Color:</label>
-          <input type="text" name="color" checked={product.color} onChange={handleChange} className="form-checkbox" />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-[#101023] font-medium">Description:</Label>
+                <textarea 
+                  name="description" 
+                  value={product.description} 
+                  onChange={handleChange} 
+                  rows="3" 
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent" 
+                />
+              </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="handling_instructions" className="text-[#101023] font-medium">Handling Instructions:</Label>
+                <textarea 
+                  name="handling_instructions" 
+                  value={product.handling_instructions} 
+                  onChange={handleChange} 
+                  rows="3" 
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent" 
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Returnable:</label>
-          <input type="checkbox" name="returnable" checked={product.returnable} onChange={handleChange} className="form-checkbox" />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="material_composition" className="text-[#101023] font-medium">Material Composition:</Label>
+                <textarea 
+                  name="material_composition" 
+                  value={product.material_composition} 
+                  onChange={handleChange} 
+                  rows="3" 
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent" 
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Digital Product:</label>
-          <input type="checkbox" name="digital_product" checked={product.digital_product} onChange={handleChange} className="form-checkbox" />
-        </div>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-[#101023]">Product Options</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="returnable"
+                      checked={product.returnable}
+                      onCheckedChange={(checked) => setProduct(prev => ({...prev, returnable: checked}))}
+                    />
+                    <Label htmlFor="returnable" className="text-[#101023]">Returnable</Label>
+                  </div>
 
-        
-        <div className="form-group">
-          <label>Open Item:</label>
-          <input type="checkbox" name="open_item" checked={product.open_item} onChange={handleChange} className="form-checkbox" />
-        </div>
-        
-        <div className="form-group">
-          <label>Home-made:</label>
-          <input type="checkbox" name="housemade" checked={product.housemade} onChange={handleChange} className="form-checkbox" />
-        </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="digital_product"
+                      checked={product.digital_product}
+                      onCheckedChange={(checked) => setProduct(prev => ({...prev, digital_product: checked}))}
+                    />
+                    <Label htmlFor="digital_product" className="text-[#101023]">Digital Product</Label>
+                  </div>
 
-        <div className="form-group">
-          <label>Bundle:</label>
-          <input type="checkbox" name="bundle" checked={product.bundle} onChange={handleChange} className="form-checkbox" />
-        </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="open_item"
+                      checked={product.open_item}
+                      onCheckedChange={(checked) => setProduct(prev => ({...prev, open_item: checked}))}
+                    />
+                    <Label htmlFor="open_item" className="text-[#101023]">Open Item</Label>
+                  </div>
 
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="housemade"
+                      checked={product.housemade}
+                      onCheckedChange={(checked) => setProduct(prev => ({...prev, housemade: checked}))}
+                    />
+                    <Label htmlFor="housemade" className="text-[#101023]">Home-made</Label>
+                  </div>
 
-        <div className="form-group">
-          <label>Raw Material:</label>
-          <input type="checkbox" name="raw_material" checked={product.raw_material} onChange={handleChange} className="form-checkbox" />
-        </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="bundle"
+                      checked={product.bundle}
+                      onCheckedChange={(checked) => setProduct(prev => ({...prev, bundle: checked}))}
+                    />
+                    <Label htmlFor="bundle" className="text-[#101023]">Bundle</Label>
+                  </div>
 
-        <div className="form-group">
-          <label>Warranty Period (days):</label>
-          <input type="number" name="warranty_period" value={product.warranty_period} onChange={handleChange} className="form-input" />
-        </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="raw_material"
+                      checked={product.raw_material}
+                      onCheckedChange={(checked) => setProduct(prev => ({...prev, raw_material: checked}))}
+                    />
+                    <Label htmlFor="raw_material" className="text-[#101023]">Raw Material</Label>
+                  </div>
+                </div>
+              </div>
 
-        <div className="form-group">
-          <label>Handling Instructions:</label>
-          <textarea name="handling_instructions" value={product.handling_instructions} onChange={handleChange} rows="3" className="form-input" />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="images" className="text-[#101023] font-medium">Images:</Label>
+                <Input 
+                  type="file" 
+                  accept="image/*" 
+                  multiple 
+                  onChange={handleFileChange}
+                  className="w-full" 
+                />
+              </div>
+              
+              {product.images && product.images.length > 0 && (
+                <img 
+                  src={getImagePreviewSrc(product.images[0])} 
+                  alt="Preview" 
+                  className="mt-2 w-32 h-32 object-cover rounded-md" 
+                />
+              )}
 
-        <div className="form-group">
-          <label>Material Composition:</label>
-          <textarea name="material_composition" value={product.material_composition} onChange={handleChange} rows="3" className="form-input" />
-        </div>
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
 
-        <div className="form-group">
-          <label>Packaging Dimensions (L x W x H) (cms):</label>
-          <input type="text" name="packaging_dimensions" value={product.packaging_dimensions} onChange={handleChange} className="form-input" />
-        </div>
-
-        <div className="form-group">
-          <label>Packaging Weight (grams):</label>
-          <input type="number" name="packaging_weight" value={product.packaging_weight} onChange={handleChange} className="form-input" />
-        </div>
-
-        <div className="form-group">
-          <label>Images:</label>
-          <input 
-            type="file" 
-            accept="image/*" 
-            multiple 
-            onChange={handleFileChange}
-            required
-            className="form-input" 
-          />
-        </div>
-        
-                  {product.image &&
-                    // Display the image preview if an image is selected
-                    <img src={getImagePreviewSrc(product.images[0])} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-                  }
-
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
-
-        <button type="submit" className="submit-button">{mode === "add" ? "Add Product" : "Update Product"}</button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/products")}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Product" : "Update Product"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

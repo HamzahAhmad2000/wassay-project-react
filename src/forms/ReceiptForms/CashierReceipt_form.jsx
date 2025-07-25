@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { getInventoryByBranch } from "/src/APIs/ProductAPIs";
 import { toast } from "react-toastify";
-import { Button } from "/components/ui/button";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
 import { getLPR } from "/src/APIs/CompanyAPIs";
 
 const CashierReceiptForm = ({ mode = "add" }) => {

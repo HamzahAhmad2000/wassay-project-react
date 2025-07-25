@@ -6,7 +6,12 @@ import "/src/styles/FormStyles.css";
 import PropTypes from "prop-types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Select from "react-select";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Textarea } from "../../additionalOriginuiComponents/ui/textarea";
 import { getImagePreviewSrc } from "/src/utils/imageUtil";
 
 const ExpenseForm = ({ mode = "add" }) => {
@@ -139,18 +144,18 @@ const ExpenseForm = ({ mode = "add" }) => {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
+  const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: files ? files[0] : value,
+      [field]: value,
     }));
   };
 
-  const handleSelectChange = (name, selectedOption) => {
+  const handleFileChange = (e) => {
+    const files = e.target.files;
     setFormData((prev) => ({
       ...prev,
-      [name]: selectedOption ? selectedOption.value : "",
+      bill_image: files ? files[0] : null,
     }));
   };
 
@@ -174,182 +179,192 @@ const ExpenseForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Expense" : "Edit Expense"}</h2>
-      <form onSubmit={handleSubmit} className="company-form" encType="multipart/form-data">
-        {user?.is_superuser && (
-          <>
-            <div className="form-group">
-              <label>Company:</label>
-              <Select
-                value={
-                  companies
-                    .map((company) => ({
-                      value: company.id,
-                      label: company.name,
-                    }))
-                    .find((option) => option.value === formData.company) || null
-                }
-                onChange={(selectedOption) => handleSelectChange("company", selectedOption)}
-                name="company"
-                className="form-input"
-                options={companies.map((company) => ({
-                  value: company.id,
-                  label: company.name,
-                }))}
-                placeholder="Select Company"
-              />
-            </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Expense" : "Edit Expense"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
+              {user?.is_superuser && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                    <Select value={formData.company} onValueChange={(value) => handleChange("company", value)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Company" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {companies.map((company) => (
+                          <SelectItem key={company.id} value={company.id}>
+                            {company.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            <div className="form-group">
-              <label>Branch:</label>
-              <Select
-                value={
-                  branches
-                    .map((branch) => ({
-                      value: branch.id,
-                      label: branch.address,
-                    }))
-                    .find((option) => option.value === formData.branch) || null
-                }
-                onChange={(selectedOption) => handleSelectChange("branch", selectedOption)}
-                name="branch"
-                className="form-input"
-                options={branches.map((branch) => ({
-                  value: branch.id,
-                  label: branch.address,
-                }))}
-                placeholder="Select Branch"
-              />
-            </div>
-          </>
-        )}
+                  <div className="space-y-2">
+                    <Label htmlFor="branch" className="text-[#101023] font-medium">Branch</Label>
+                    <Select value={formData.branch} onValueChange={(value) => handleChange("branch", value)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {branches.map((branch) => (
+                          <SelectItem key={branch.id} value={branch.id}>
+                            {branch.address}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              )}
 
-        <div className="form-group">
-          <label>Date:</label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="form-input"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Amount (Cash):</label>
-          <input
-            type="number"
-            name="amount_cash"
-            min={0}
-            value={formData.amount_cash}
-            onChange={handleChange}
-            placeholder="0.00"
-            className="form-input"
-            step="0.01"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Amount (Bank):</label>
-          <input
-            type="number"
-            min={0}
-            name="amount_bank"
-            value={formData.amount_bank}
-            onChange={handleChange}
-            placeholder="0.00"
-            className="form-input"
-            step="0.01"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Category:</label>
-          <input
-            type="text"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            placeholder="e.g., Utilities"
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Note:</label>
-          <textarea
-            name="note"
-            value={formData.note}
-            onChange={handleChange}
-            placeholder="Additional notes"
-            className="form-input"
-          />
-        </div>
-
-
-        <div className="form-group">
-          <label>Bill Image:</label>
-          <input
-            type="file"
-            name="bill_image"
-            onChange={handleChange}
-            accept="image/jpeg,image/png"
-            className="form-input"
-            required
-            
-          />
-
-          
-          {formData.bill_image &&
-            // Display the bill_image preview if an bill_image is selected
-            <img src={getImagePreviewSrc(formData.bill_image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-          }
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-gray-700">Additional Data (Key-Value Pairs):</label>
-          <div className="flex flex-col gap-3">
-            {keyValuePairs.map((pair, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <input
-                  type="text"
-                  placeholder="Key (e.g., vendor)"
-                  value={pair.key}
-                  onChange={(e) => handleKeyValueChange(index, "key", e.target.value)}
-                  className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              <div className="space-y-2">
+                <Label htmlFor="date" className="text-[#101023] font-medium">Date</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => handleChange("date", e.target.value)}
+                  className="w-full"
+                  required
                 />
-                <input
-                  type="text"
-                  placeholder="Value (e.g., ABC Corp)"
-                  value={pair.value}
-                  onChange={(e) => handleKeyValueChange(index, "value", e.target.value)}
-                  className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-                <button
-                  type="button"
-                  className="rounded-md bg-red-500 px-3 py-2 text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                  onClick={() => removeKeyValuePair(index)}
-                >
-                  Remove
-                </button>
               </div>
-            ))}
-            <button
-              type="button"
-              className="self-start rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-              onClick={addKeyValuePair}
-            >
-              Add Key-Value Pair
-            </button>
-          </div>
-        </div>
 
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Expense" : "Update Expense"}
-        </button>
-      </form>
+              <div className="space-y-2">
+                <Label htmlFor="amount_cash" className="text-[#101023] font-medium">Amount (Cash)</Label>
+                <Input
+                  id="amount_cash"
+                  type="number"
+                  min={0}
+                  value={formData.amount_cash}
+                  onChange={(e) => handleChange("amount_cash", e.target.value)}
+                  placeholder="0.00"
+                  className="w-full"
+                  step="0.01"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="amount_bank" className="text-[#101023] font-medium">Amount (Bank)</Label>
+                <Input
+                  id="amount_bank"
+                  type="number"
+                  min={0}
+                  value={formData.amount_bank}
+                  onChange={(e) => handleChange("amount_bank", e.target.value)}
+                  placeholder="0.00"
+                  className="w-full"
+                  step="0.01"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-[#101023] font-medium">Category</Label>
+                <Input
+                  id="category"
+                  type="text"
+                  value={formData.category}
+                  onChange={(e) => handleChange("category", e.target.value)}
+                  placeholder="e.g., Utilities"
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="note" className="text-[#101023] font-medium">Note</Label>
+                <Textarea
+                  id="note"
+                  value={formData.note}
+                  onChange={(e) => handleChange("note", e.target.value)}
+                  placeholder="Additional notes"
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="bill_image" className="text-[#101023] font-medium">Bill Image</Label>
+                <Input
+                  id="bill_image"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="image/jpeg,image/png"
+                  className="w-full"
+                  required
+                />
+
+                {formData.bill_image &&
+                  // Display the bill_image preview if an bill_image is selected
+                  <img src={getImagePreviewSrc(formData.bill_image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
+                }
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-sm font-semibold text-[#101023]">Additional Data (Key-Value Pairs):</Label>
+                <div className="flex flex-col gap-3">
+                  {keyValuePairs.map((pair, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Input
+                        type="text"
+                        placeholder="Key (e.g., vendor)"
+                        value={pair.key}
+                        onChange={(e) => handleKeyValueChange(index, "key", e.target.value)}
+                        className="flex-1"
+                      />
+                      <Input
+                        type="text"
+                        placeholder="Value (e.g., ABC Corp)"
+                        value={pair.value}
+                        onChange={(e) => handleKeyValueChange(index, "value", e.target.value)}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => removeKeyValuePair(index)}
+                        className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={addKeyValuePair}
+                    className="self-start border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
+                  >
+                    Add Key-Value Pair
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/expenses')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Expense" : "Update Expense"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

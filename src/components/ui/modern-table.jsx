@@ -94,7 +94,7 @@ const Table = React.forwardRef(({ className, data, columns, ...props }, ref) => 
 Table.displayName = "Table"
 
 const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
-  <div className={cn("w-full overflow-x-auto", className)} ref={ref} {...props} />
+  <div className={cn("w-full overflow-x-auto table-scrollbar", className)} ref={ref} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
 

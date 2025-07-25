@@ -6,7 +6,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getImagePreviewSrc } from "/src/utils/imageUtil";
 import { getContractDocumentCategory } from "/src/APIs/ProductAPIs";
-
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const ContractDocumentForm = () => {
   const navigate = useNavigate();
@@ -109,173 +113,191 @@ const ContractDocumentForm = () => {
   }
 
   return (
-    <div className="contract-document-form-page">
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {existingData.id ? "Update Contract Document" : "Add New Contract Document"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Company */}
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">
+                    Company
+                  </Label>
+                  <Select
+                    value={formData.company}
+                    onValueChange={(value) => setFormData({ ...formData, company: value })}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                          {company.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Branch */}
+              {user && (
+                <div className="space-y-2">
+                  <Label htmlFor="branch" className="text-[#101023] font-medium">
+                    Branch
+                  </Label>
+                  <Select
+                    value={formData.branch}
+                    onValueChange={(value) => setFormData({ ...formData, branch: value })}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {branches.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>
+                          {branch.address}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-[#101023] font-medium">
+                  Name:
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-[#101023] font-medium">
+                  Description:
+                </Label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="supplier" className="text-[#101023] font-medium">
+                  Supplier:
+                </Label>
+                <Select
+                  value={formData.supplier}
+                  onValueChange={(value) => setFormData({ ...formData, supplier: value })}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Supplier" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {suppliers.map((supplier) => (
+                      <SelectItem key={supplier.id} value={supplier.id}>
+                        {supplier.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="note" className="text-[#101023] font-medium">
+                  Notes (Optional):
+                </Label>
+                <textarea
+                  id="note"
+                  name="note"
+                  value={formData.note}
+                  onChange={handleChange}
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-[#101023] font-medium">
+                  Category
+                </Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => setFormData({ ...formData, category: value })}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="image" className="text-[#101023] font-medium">
+                  Image
+                </Label>
+                <Input
+                  id="image"
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  required
+                  className="w-full"
+                  onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
+                />
+                
+                {formData.image && (
+                  <img 
+                    src={getImagePreviewSrc(formData.image)} 
+                    alt="Preview" 
+                    className="mt-2 w-32 h-32 object-cover rounded-md" 
+                  />
+                )}
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {existingData.id ? "Update Payment" : "Add Payment"}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => navigate("/contract-documents")}
+                  variant="outline"
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
       <ToastContainer position="top-right" autoClose={3000} />
-      <h1 className="page-title">
-        {existingData.id ? "Update Contract Document" : "Add New Contract Document"}
-      </h1>
-      <form onSubmit={handleSubmit} className="max-w-lg mx-auto mt-8 space-y-4">
-        {/* Company */}
-        {user && user.is_superuser && (
-
-          <div className="form-group">
-            <label htmlFor="company">Company</label>
-            <select
-              id="company"
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select a company</option>
-              {companies.map((company) => (
-                <option key={company.id} value={company.id}>
-                  {company.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          )}
-
-
-          
-        {/* Branch */}
-        {user && (
-          <div className="form-group">
-            <label htmlFor="branch">Branch</label>
-            <select
-              id="branch"
-              name="branch"
-              value={formData.branch}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select a branch</option>
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.address}
-                </option>
-              ))}
-            </select>
-          </div>
-          )}
-
-          
-        <div>
-          <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
-            Name:
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
-
-         <div>
-          <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2">
-            Description:
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="supplier" className="block text-gray-700 text-sm font-bold mb-2">
-            Supplier:
-          </label>
-          <select
-            id="supplier"
-            name="supplier"
-            value={formData.supplier}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          >
-            <option value="">Select Supplier</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier.id} value={supplier.id}>
-                {supplier.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        <div>
-          <label htmlFor="note" className="block text-gray-700 text-sm font-bold mb-2">
-            Notes (Optional):
-          </label>
-          <textarea
-            id="note"
-            name="note"
-            value={formData.note}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-
-         <div className="form-group">
-            <label htmlFor="branch">Category</label>
-            <select
-              id="category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select a category</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            required
-
-            className="form-input"
-            onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
-          />
-          
-          
-          {formData.image &&
-            // Display the image preview if an image is selected
-            <img src={getImagePreviewSrc(formData.image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-          }
-        </div>
-
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            {existingData.id ? "Update Payment" : "Add Payment"}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate("/contract-documents")}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
     </div>
   );
 };

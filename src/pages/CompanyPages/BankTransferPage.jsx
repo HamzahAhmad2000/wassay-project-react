@@ -123,19 +123,10 @@ const BankTransferPage = () => {
   if (error) return <div className="text-red-500 text-center mt-4">{error}</div>;
 
   return (
-    <div className="bank-page">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <h1 className="page-title">BankTransfer Details</h1>
+    <div className="p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-[#201b50] mb-2">BankTransfer Details</h1>
+      </div>
       <SearchFilter
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -150,6 +141,17 @@ const BankTransferPage = () => {
         imageSrc={selectedImage}
         altText='profitLog image'
         onClose={() => setSelectedImage(null)}
+      />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
     </div>
   );

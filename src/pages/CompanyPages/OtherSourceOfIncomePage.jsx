@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ImageModal from "/src/components/ImageModal";
 import {formatDate} from "/src/utils/dateUtils"; // Adjust the import path as needed
 import { Pencil, Trash2 } from "lucide-react";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
 
 const OtherSourceOfIncomePage = () => {
   const navigate = useNavigate();
@@ -111,20 +112,24 @@ const OtherSourceOfIncomePage = () => {
     created_at: formatDate(bank.created_at) || "N/A", // Adjust key if needed
     actions: (
       <div className="flex space-x-2">
-        <button
+        <Button
           onClick={() => (navigate(`/update-other-source-of-income`, { state: {bank}}))} // Adjust route as needed
-          className="inline-flex items-center px-2 py-1 border border-yellow-500 text-yellow-500 rounded hover:bg-yellow-500 hover:text-white focus:outline-none text-sm"
+          variant="outline"
+          size="sm"
+          className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
         >
           <Pencil className="h-4 w-4 mr-1" />
           Update
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => handleDelete(bank.id)}
-          className="inline-flex items-center px-2 py-1 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white focus:outline-none text-sm"
+          variant="outline"
+          size="sm"
+          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
         >
           <Trash2 className="h-4 w-4 mr-1" />
           Delete
-        </button>
+        </Button>
       </div>
     ),
   }));
@@ -133,19 +138,10 @@ const OtherSourceOfIncomePage = () => {
   if (error) return <div className="text-red-500 text-center mt-4">{error}</div>;
 
   return (
-    <div className="bank-page">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <h1 className="page-title">OtherSourceOfIncome Details</h1>
+    <div className="p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-[#201b50] mb-2">OtherSourceOfIncome Details</h1>
+      </div>
       <SearchFilter
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -160,6 +156,17 @@ const OtherSourceOfIncomePage = () => {
         imageSrc={selectedImage}
         altText='profitLog image'
         onClose={() => setSelectedImage(null)}
+      />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
     </div>
   );

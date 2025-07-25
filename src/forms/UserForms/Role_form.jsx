@@ -7,7 +7,11 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
-
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../../additionalOriginuiComponents/ui/card";
+import { Select as OriginSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const animatedComponents = makeAnimated();
 
@@ -149,77 +153,123 @@ const RoleForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Role" : "Edit Role"}</h2>
-      <form className="company-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name:</label>
-          <input type="text" value={roleData.name} onChange={(e) => handleChange("name", e.target.value)} required className="form-input" />
-        </div>
-        {user && user.is_superuser && (
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Role" : "Edit Role"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-[#101023] font-medium">Name</Label>
+                <Input
+                  type="text"
+                  id="name"
+                  value={roleData.name}
+                  onChange={(e) => handleChange("name", e.target.value)}
+                  required
+                  className="w-full"
+                />
+              </div>
 
-          <div className="form-group">
-            <label>Company:</label>
-            <select value={roleData.company} onChange={(e) => handleChange("company", e.target.value)} required className="form-input">
-              <option value="" disabled>Select a Company</option>
-              {options.companies.map((option) => (
-                <option key={option.id} value={option.id}>{option.name}</option>
-              ))}
-            </select>
-          </div>
-          )}
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <OriginSelect value={roleData.company} onValueChange={(value) => handleChange("company", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {options.companies.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>{option.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </OriginSelect>
+                </div>
+              )}
 
-        <div className="form-group">
-          <label>Upper Role:</label>
-          <select value={roleData.upper_role} onChange={(e) => handleChange("upper_role", e.target.value)} className="form-input">
-            <option value="" disabled>Select an upper role</option>
-            {options.upperRoles.map((option) => (
-              <option key={option.id} value={option.id}>{option.name}</option>
-            ))}
-          </select>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="upper_role" className="text-[#101023] font-medium">Upper Role</Label>
+                <OriginSelect value={roleData.upper_role} onValueChange={(value) => handleChange("upper_role", value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select an upper role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {options.upperRoles.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>{option.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </OriginSelect>
+              </div>
 
-    <div className="form-group">
-      <label htmlFor="multi-select" className="text-sm font-medium text-gray-700">
-        Select Permissions:
-      </label>
-      <Select
-        id="multi-select"
-        options={Object.entries(groupedPermissions).map(([category, group]) => ({
-          label: (
-            <div className="flex justify-between items-center">
-              <span>{category}</span>
-              <button
-                type="button"
-                className="text-blue-500 text-xs underline ml-2"
-                onClick={() => handleSelectAll(category)}
-              >
-                Select All
-              </button>
-            </div>
-          ),
-          options: group.options,
-        }))}
-        isMulti
-        onChange={(value) => handleChange("permissions", value)}
-        value={roleData.permissions}
-        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
-        closeMenuOnSelect={false}
-        components={animatedComponents}
-        isSearchable
-      />
-    </div>
+              <div className="space-y-2">
+                <Label htmlFor="multi-select" className="text-[#101023] font-medium">
+                  Select Permissions
+                </Label>
+                <Select
+                  id="multi-select"
+                  options={Object.entries(groupedPermissions).map(([category, group]) => ({
+                    label: (
+                      <div className="flex justify-between items-center">
+                        <span>{category}</span>
+                        <button
+                          type="button"
+                          className="text-blue-500 text-xs underline ml-2"
+                          onClick={() => handleSelectAll(category)}
+                        >
+                          Select All
+                        </button>
+                      </div>
+                    ),
+                    options: group.options,
+                  }))}
+                  isMulti
+                  onChange={(value) => handleChange("permissions", value)}
+                  value={roleData.permissions}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  isSearchable
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea rows="3" value={roleData.description} onChange={(e) => handleChange("description", e.target.value)} className="form-input" />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-[#101023] font-medium">Description</Label>
+                <textarea
+                  rows="3"
+                  id="description"
+                  value={roleData.description}
+                  onChange={(e) => handleChange("description", e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent"
+                />
+              </div>
 
-        {status.error && <p className="error-text">{status.error}</p>}
-        {status.success && <p className="success-text">{status.success}</p>}
+              {status.error && <p className="text-red-600 text-sm">{status.error}</p>}
+              {status.success && <p className="text-green-600 text-sm">{status.success}</p>}
 
-        <button type="submit" className="submit-button">{mode === "add" ? "Add Role" : "Update Role"}</button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/roles')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Role" : "Update Role"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

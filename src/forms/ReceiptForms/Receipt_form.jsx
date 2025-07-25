@@ -6,7 +6,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { getInventoryByBranch } from "/src/APIs/ProductAPIs";
 import { toast } from "react-toastify";
-import { Button } from "/components/ui/button";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Checkbox } from "../../additionalOriginuiComponents/ui/checkbox";
 import { getLPR } from "/src/APIs/CompanyAPIs";
 
 const ReceiptForm = ({ mode = "add" }) => {
@@ -412,434 +417,426 @@ const ReceiptForm = ({ mode = "add" }) => {
   ]);
 
   return (
-    <div className="form-container bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        {mode === "add" ? "Create New Receipt" : "Edit Receipt"}
-      </h2>
-
-      {(error || success) && (
-        <div className={`mb-4 p-3 rounded-lg ${error ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
-          {error || success}
-        </div>
-      )}
-
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        {/* Customer & Payment Method Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Customer <span className="text-red-500">*</span></label>
-            <select
-              name="customer"
-              value={receipt.customer}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select Customer</option>
-              {customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.first_name} {customer.last_name} ({customer.phone_number})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Payment Method <span className="text-red-500">*</span></label>
-            <select
-              name="payment_method"
-              value={receipt.payment_method}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="">Select a Payment Method</option>
-              <option value="Cash">Cash</option>
-              <option value="Card">Card</option>
-              <option value="Mobile Wallet">Mobile Wallet</option>
-              <option value="Online">Online</option>
-            </select>
-            <div className="text-xs text-gray-500 mt-1">
-              {receipt.payment_method === "Card" ? "Card payments have a 5% tax rate" : "Cash/online payments have a 16% tax rate"}
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-1" style={{ display: (receipt.payment_method === "Online" || receipt.payment_method === "Mobile Wallet") ? 'block' : 'none' }}>
-          <label className="block font-medium text-gray-700">Transaction ID <span className="text-red-500">*</span></label>
-          <input
-            name="transection_id"
-            value={receipt.transection_id}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Products Table */}
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="font-medium text-gray-700">Products <span className="text-red-500">*</span></label>
-            <button
-              type="button"
-              onClick={addLineItem}
-              className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 text-sm flex items-center"
-            >
-              <span className="mr-1">+</span> Add Product
-            </button>
-          </div>
-
-          <div className="overflow-x-auto border border-gray-300 rounded-lg">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-100">
-                <tr className="text-left">
-                  <th className="p-2 border-b">Product</th>
-                  <th className="p-2 border-b">Quantity</th>
-                  <th className="p-2 border-b">Price</th>
-                  <th className="p-2 border-b">Discount</th>
-                  <th className="p-2 border-b">Total</th>
-                  {mode === "edit" && <th className="p-2 border-b">Return</th>}
-                  <th className="p-2 border-b">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {lineItems.map((item, index) => (
-                  <tr key={index} className={item.has_returned ? "bg-red-50" : ""}>
-                    <td className="p-2 border-b">
-                      <select
-                        name="product"
-                        value={mode === "add" ? item.product : (item.product?.id || item.product)}
-                        onChange={(e) => handleLineItemChange(index, "product", e.target.value)}
-                        className="w-full p-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        required
-                      >
-                        <option value="">Select Product</option>
-                        {products.map((product) => (
-                          <option key={product.id} value={product.id}>
-                            {product.product_name}
-                            {product.product_weight ? ` - ${product.product_weight}` : ""}
-                            {product.unit} - {product.retail_price}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="p-2 border-b">
-                      <input
-                        type="number"
-                        value={item.quantity || ""}
-                        onChange={(e) => handleLineItemChange(index, "quantity", parseInt(e.target.value, 10) || 0)}
-                        min="1"
-                        className="w-full p-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
-                    </td>
-                    <td className="p-2 border-b">
-                      <input
-                        type="number"
-                        value={item.price || ""}
-                        min="0"
-                        step="0.01"
-                        onChange={(e) => handleLineItemChange(index, "price", parseFloat(e.target.value) || 0)}
-                        className="w-full p-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
-                    </td>
-                    <td className="p-2 border-b">
-                      <input
-                        type="number"
-                        value={item.discount || 0}
-                        min="0"
-                        step="0.01"
-                        onChange={(e) => handleLineItemChange(index, "discount", parseFloat(e.target.value) || 0)}
-                        className="w-full p-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
-                    </td>
-                    <td className="p-2 border-b font-bold text-gray-700">
-                      ${(item.total_price || 0).toFixed(2)}
-                    </td>
-                    {mode === "edit" &&
-                      <td className="p-2 border-b text-center">
-                        <input
-                          type="checkbox"
-                          checked={item.has_returned || false}
-                          onChange={(e) => handleLineItemChange(index, "has_returned", e.target.checked)}
-                          className="w-4 h-4"
-                        />
-                      </td>
-                    }
-                    <td className="p-2 border-b">
-                      <button
-                        type="button"
-                        onClick={() => removeLineItem(index)}
-                        className="text-red-600 hover:text-red-800 font-semibold"
-                      >
-                        ✖ Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Financial Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Subtotal:</label>
-            <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg">
-              ${calculatedValues.subtotal.toFixed(2)}
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Discount Amount:</label>
-            <input
-              type="number"
-              name="discount_amount"
-              value={receipt.discount_amount.toFixed(2)}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Tax Amount:</label>
-            <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg">
-              ${receipt.tax_amount.toFixed(2)}
-            </div>
-          </div>
-        </div>
-
-        {/* Payment Details */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Customer Loyalty Points:</label>
-            <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg font-bold">
-              {availableLoyaltyPoints?.points?.toFixed(2)}
-            </div>
-          </div>
-          {availableLoyaltyPoints.points > 0 && (
-            <div className="flex items-end">
-              <Button
-                type="button"
-                onClick={handleUseLoyaltyPoints}
-                className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-              >
-                Use Loyalty Points
-              </Button>
-            </div>
-          )}
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Total Amount:</label>
-            <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg font-bold">
-              ${calculatedValues.finalAmount.toFixed(2)}
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Amount Paid By Cash:</label>
-            <input
-              type="number"
-              name="payment_by_cash"
-              value={receipt.payment_by_cash || 0.0}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Amount Paid By Card:</label>
-            <input
-              type="number"
-              name="payment_by_card"
-              value={receipt.payment_by_card || 0.0}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Amount Paid By Gift Card:</label>
-            <input
-              type="number"
-              name="payment_by_gift_card"
-              value={receipt.payment_by_gift_card || 0.0}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Amount Paid By Credit Card:</label>
-            <input
-              type="number"
-              name="payment_by_credit_card"
-              value={receipt.payment_by_credit_card || 0.0}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Amount Paid By Bank Transfer:</label>
-            <input
-              type="number"
-              name="payment_by_bank_transfer"
-              value={receipt.payment_by_bank_transfer || 0.0}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Amount Paid By Mobile Wallet:</label>
-            <input
-              type="number"
-              name="payment_by_mobile_money"
-              value={receipt.payment_by_mobile_money || 0.0}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Total Amount Paid:</label>
-            <input
-              type="number"
-              name="amount_paid"
-              value={receipt.amount_paid || 0.0}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              disabled
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Balance Due:</label>
-            <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-red-600 font-bold">
-              ${calculatedValues.balanceDue.toFixed(2)}
-            </div>
-          </div>
-        </div>
-
-        {/* Additional Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="block font-medium text-gray-700">Payment Status:</label>
-            <select
-              name="payment_status"
-              value={receipt.payment_status}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="Pending">Pending</option>
-              <option value="Partial">Partial</option>
-              <option value="Completed">Completed</option>
-            </select>
-          </div>
-
-          <div className="space-y-3">
-            <label className="block font-medium text-gray-700">Invoice Number:</label>
-            <input
-              type="text"
-              name="invoice_number"
-              value={receipt.invoice_number}
-              onChange={handleChange}
-              placeholder="Invoice Number"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="online_sale"
-              name="online_sale"
-              checked={receipt.online_sale}
-              onChange={handleChange}
-              className="w-4 h-4 rounded border-gray-300 mr-2"
-            />
-            <label htmlFor="online_sale" className="font-medium text-gray-700">
-              Online Sale
-            </label>
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="gift_receipt"
-              name="gift_receipt"
-              checked={receipt.gift_receipt}
-              onChange={handleChange}
-              className="w-4 h-4 rounded border-gray-300 mr-2"
-            />
-            <label htmlFor="gift_receipt" className="font-medium text-gray-700">
-              Gift Receipt
-            </label>
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="on_hold"
-              name="on_hold"
-              checked={receipt.on_hold}
-              onChange={handleChange}
-              className="w-4 h-4 rounded border-gray-300 mr-2"
-            />
-            <label htmlFor="on_hold" className="font-medium text-gray-700">
-              Hold Receipt
-            </label>
-          </div>
-
-          {transactionStarted && (
-            <div className="space-y-1">
-              <label className="block font-medium text-gray-700">Transaction Timer:</label>
-              <div className="text-blue-600 font-medium">
-                Timer running...
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-6xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Create New Receipt" : "Edit Receipt"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {(error || success) && (
+              <div className={`mb-4 p-3 rounded-lg ${error ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+                {error || success}
               </div>
-            </div>
-          )}
-        </div>
+            )}
 
-        {/* Submit Button */}
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={() => navigate('/receipts')}
-            className="bg-gray-200 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-300"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700"
-          >
-            {mode === "add" ? "Create Receipt" : "Update Receipt"}
-          </button>
-        </div>
-      </form>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {/* Customer & Payment Method Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Customer <span className="text-red-500">*</span></Label>
+                  <Select value={receipt.customer} onValueChange={(value) => setReceipt(prev => ({...prev, customer: value}))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Customer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {customers.map((customer) => (
+                        <SelectItem key={customer.id} value={customer.id}>
+                          {customer.first_name} {customer.last_name} ({customer.phone_number})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Payment Method <span className="text-red-500">*</span></Label>
+                  <Select value={receipt.payment_method} onValueChange={(value) => setReceipt(prev => ({...prev, payment_method: value}))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Payment Method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Cash">Cash</SelectItem>
+                      <SelectItem value="Card">Card</SelectItem>
+                      <SelectItem value="Mobile Wallet">Mobile Wallet</SelectItem>
+                      <SelectItem value="Online">Online</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {receipt.payment_method === "Card" ? "Card payments have a 5% tax rate" : "Cash/online payments have a 16% tax rate"}
+                  </div>
+                </div>
+              </div>
+
+              {(receipt.payment_method === "Online" || receipt.payment_method === "Mobile Wallet") && (
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Transaction ID <span className="text-red-500">*</span></Label>
+                  <Input
+                    name="transection_id"
+                    value={receipt.transection_id}
+                    onChange={handleChange}
+                    className="w-full"
+                  />
+                </div>
+              )}
+
+              {/* Products Table */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <Label className="text-[#101023] font-medium">Products <span className="text-red-500">*</span></Label>
+                  <Button
+                    type="button"
+                    onClick={addLineItem}
+                    className="bg-[#423e7f] text-white hover:bg-[#201b50] text-sm"
+                  >
+                    <span className="mr-1">+</span> Add Product
+                  </Button>
+                </div>
+
+                <div className="overflow-x-auto border border-gray-300 rounded-lg">
+                  <table className="w-full border-collapse">
+                    <thead className="bg-gray-100">
+                      <tr className="text-left">
+                        <th className="p-2 border-b text-[#201b50] font-medium">Product</th>
+                        <th className="p-2 border-b text-[#201b50] font-medium">Quantity</th>
+                        <th className="p-2 border-b text-[#201b50] font-medium">Price</th>
+                        <th className="p-2 border-b text-[#201b50] font-medium">Discount</th>
+                        <th className="p-2 border-b text-[#201b50] font-medium">Total</th>
+                        {mode === "edit" && <th className="p-2 border-b text-[#201b50] font-medium">Return</th>}
+                        <th className="p-2 border-b text-[#201b50] font-medium">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lineItems.map((item, index) => (
+                        <tr key={index} className={item.has_returned ? "bg-red-50" : ""}>
+                          <td className="p-2 border-b">
+                            <Select 
+                              value={mode === "add" ? item.product : (item.product?.id || item.product)}
+                              onValueChange={(value) => handleLineItemChange(index, "product", value)}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select Product" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {products.map((product) => (
+                                  <SelectItem key={product.id} value={product.id}>
+                                    {product.product_name}
+                                    {product.product_weight ? ` - ${product.product_weight}` : ""}
+                                    {product.unit} - {product.retail_price}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </td>
+                          <td className="p-2 border-b">
+                            <Input
+                              type="number"
+                              value={item.quantity || ""}
+                              onChange={(e) => handleLineItemChange(index, "quantity", parseInt(e.target.value, 10) || 0)}
+                              min="1"
+                              className="w-full"
+                            />
+                          </td>
+                          <td className="p-2 border-b">
+                            <Input
+                              type="number"
+                              value={item.price || ""}
+                              min="0"
+                              step="0.01"
+                              onChange={(e) => handleLineItemChange(index, "price", parseFloat(e.target.value) || 0)}
+                              className="w-full"
+                            />
+                          </td>
+                          <td className="p-2 border-b">
+                            <Input
+                              type="number"
+                              value={item.discount || 0}
+                              min="0"
+                              step="0.01"
+                              onChange={(e) => handleLineItemChange(index, "discount", parseFloat(e.target.value) || 0)}
+                              className="w-full"
+                            />
+                          </td>
+                          <td className="p-2 border-b font-bold text-[#101023]">
+                            ${(item.total_price || 0).toFixed(2)}
+                          </td>
+                          {mode === "edit" &&
+                            <td className="p-2 border-b text-center">
+                              <Checkbox
+                                checked={item.has_returned || false}
+                                onCheckedChange={(checked) => handleLineItemChange(index, "has_returned", checked)}
+                              />
+                            </td>
+                          }
+                          <td className="p-2 border-b">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => removeLineItem(index)}
+                              className="text-red-600 hover:text-red-800 font-semibold"
+                            >
+                              ✖ Remove
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Financial Summary */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Subtotal:</Label>
+                  <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg">
+                    ${calculatedValues.subtotal.toFixed(2)}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Discount Amount:</Label>
+                  <Input
+                    type="number"
+                    name="discount_amount"
+                    value={receipt.discount_amount.toFixed(2)}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Tax Amount:</Label>
+                  <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg">
+                    ${receipt.tax_amount.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Details */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Customer Loyalty Points:</Label>
+                  <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg font-bold">
+                    {availableLoyaltyPoints?.points?.toFixed(2)}
+                  </div>
+                </div>
+                {availableLoyaltyPoints.points > 0 && (
+                  <div className="flex items-end">
+                    <Button
+                      type="button"
+                      onClick={handleUseLoyaltyPoints}
+                      className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                    >
+                      Use Loyalty Points
+                    </Button>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Total Amount:</Label>
+                  <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg font-bold">
+                    ${calculatedValues.finalAmount.toFixed(2)}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Amount Paid By Cash:</Label>
+                  <Input
+                    type="number"
+                    name="payment_by_cash"
+                    value={receipt.payment_by_cash || 0.0}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Amount Paid By Card:</Label>
+                  <Input
+                    type="number"
+                    name="payment_by_card"
+                    value={receipt.payment_by_card || 0.0}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Amount Paid By Gift Card:</Label>
+                  <Input
+                    type="number"
+                    name="payment_by_gift_card"
+                    value={receipt.payment_by_gift_card || 0.0}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Amount Paid By Credit Card:</Label>
+                  <Input
+                    type="number"
+                    name="payment_by_credit_card"
+                    value={receipt.payment_by_credit_card || 0.0}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Amount Paid By Bank Transfer:</Label>
+                  <Input
+                    type="number"
+                    name="payment_by_bank_transfer"
+                    value={receipt.payment_by_bank_transfer || 0.0}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Amount Paid By Mobile Wallet:</Label>
+                  <Input
+                    type="number"
+                    name="payment_by_mobile_money"
+                    value={receipt.payment_by_mobile_money || 0.0}
+                    onChange={handleChange}
+                    min="0"
+                    step="0.01"
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Total Amount Paid:</Label>
+                  <Input
+                    type="number"
+                    name="amount_paid"
+                    value={receipt.amount_paid || 0.0}
+                    onChange={handleChange}
+                    className="w-full bg-gray-100"
+                    disabled
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Balance Due:</Label>
+                  <div className="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-red-600 font-bold">
+                    ${calculatedValues.balanceDue.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Payment Status:</Label>
+                  <Select value={receipt.payment_status} onValueChange={(value) => setReceipt(prev => ({...prev, payment_status: value}))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Pending">Pending</SelectItem>
+                      <SelectItem value="Partial">Partial</SelectItem>
+                      <SelectItem value="Completed">Completed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Invoice Number:</Label>
+                  <Input
+                    type="text"
+                    name="invoice_number"
+                    value={receipt.invoice_number}
+                    onChange={handleChange}
+                    placeholder="Invoice Number"
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="online_sale"
+                    name="online_sale"
+                    checked={receipt.online_sale}
+                    onCheckedChange={(checked) => setReceipt(prev => ({...prev, online_sale: checked}))}
+                  />
+                  <Label htmlFor="online_sale" className="text-[#101023] font-medium">
+                    Online Sale
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="gift_receipt"
+                    name="gift_receipt"
+                    checked={receipt.gift_receipt}
+                    onCheckedChange={(checked) => setReceipt(prev => ({...prev, gift_receipt: checked}))}
+                  />
+                  <Label htmlFor="gift_receipt" className="text-[#101023] font-medium">
+                    Gift Receipt
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="on_hold"
+                    name="on_hold"
+                    checked={receipt.on_hold}
+                    onCheckedChange={(checked) => setReceipt(prev => ({...prev, on_hold: checked}))}
+                  />
+                  <Label htmlFor="on_hold" className="text-[#101023] font-medium">
+                    Hold Receipt
+                  </Label>
+                </div>
+
+                {transactionStarted && (
+                  <div className="space-y-2">
+                    <Label className="text-[#101023] font-medium">Transaction Timer:</Label>
+                    <div className="text-blue-600 font-medium">
+                      Timer running...
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/receipts')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Create Receipt" : "Update Receipt"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

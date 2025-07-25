@@ -5,6 +5,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { getCompanies } from "/src/APIs/CompanyAPIs";
 import { toast } from "react-toastify";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const GiftCardForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -114,57 +119,127 @@ const GiftCardForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Gift Card" : "Edit Gift Card"}</h2>
-      <form className="giftcard-form" onSubmit={handleSubmit}>
-        {user && user.is_superuser && (
-          <div className="form-group">
-            <label>Company:</label>
-            <select value={company} onChange={(e) => setCompany(e.target.value)} className="form-input" required>
-              <option value="">Select Company</option>
-              {companies.length > 0 && companies.map((company) => (
-                <option key={company.id} value={company.id}>{company.name}</option>
-              ))}
-            </select>
-          </div>
-        )}
-        <div className="form-group">
-          <label>Card Type:</label>
-          <select value={type} onChange={(e) => setType(e.target.value)} className="form-input" required>
-            <option value="">Select Card Type</option>
-            <option value="General">General</option>
-            <option value="Anniversary">Anniversary</option>
-            <option value="Birthday">Birthday</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label>Discount Percentage:</label>
-          <input type="number" value={percentage} onChange={(e) => setPercentage(e.target.value)} className="form-input" required />
-        </div>
-        <div className="form-group">
-          <label>Card Value:</label>
-          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="form-input" required />
-        </div>
-        <div className="form-group">
-          <label>Unique Code:</label>
-          <input type="text" value={uniqueCode} onChange={(e) => setUniqueCode(e.target.value)} className="form-input" />
-        </div>
-        <div className="form-group">
-          <label>Expiry Date:</label>
-          <input type="date" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} className="form-input" required />
-        </div>
-        <div className="form-group">
-          <label>Count:</label>
-          <input type="number" value={count} onChange={(e) => setCount(e.target.value)} className="form-input" />
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Gift Card" : "Edit Gift Card"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <Select value={company} onValueChange={setCompany}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.length > 0 && companies.map((companyOption) => (
+                        <SelectItem key={companyOption.id} value={companyOption.id}>{companyOption.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
+              <div className="space-y-2">
+                <Label htmlFor="type" className="text-[#101023] font-medium">Card Type</Label>
+                <Select value={type} onValueChange={setType}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Card Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="General">General</SelectItem>
+                    <SelectItem value="Anniversary">Anniversary</SelectItem>
+                    <SelectItem value="Birthday">Birthday</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Gift Card" : "Update Gift Card"}
-        </button>
-      </form>
+              <div className="space-y-2">
+                <Label htmlFor="percentage" className="text-[#101023] font-medium">Discount Percentage</Label>
+                <Input
+                  type="number"
+                  id="percentage"
+                  value={percentage}
+                  onChange={(e) => setPercentage(e.target.value)}
+                  required
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="amount" className="text-[#101023] font-medium">Card Value</Label>
+                <Input
+                  type="number"
+                  id="amount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  required
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="uniqueCode" className="text-[#101023] font-medium">Unique Code</Label>
+                <Input
+                  type="text"
+                  id="uniqueCode"
+                  value={uniqueCode}
+                  onChange={(e) => setUniqueCode(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="expiryDate" className="text-[#101023] font-medium">Expiry Date</Label>
+                <Input
+                  type="date"
+                  id="expiryDate"
+                  value={expiryDate}
+                  onChange={(e) => setExpiryDate(e.target.value)}
+                  required
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="count" className="text-[#101023] font-medium">Count</Label>
+                <Input
+                  type="number"
+                  id="count"
+                  value={count}
+                  onChange={(e) => setCount(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
+
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/gift-cards')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Gift Card" : "Update Gift Card"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

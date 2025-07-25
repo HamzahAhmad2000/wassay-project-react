@@ -4,6 +4,11 @@ import { postAdvanceSalaries, getUsers } from "/src/APIs/UserAPIs"; // Assuming 
 import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const AdvanceSalaryForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -107,79 +112,102 @@ const AdvanceSalaryForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add AdvanceSalary" : "Edit AdvanceSalary"}</h2>
-      <form className="advanceSalary-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Staff ID:</label>
-          <select
-            value={formData.staff}
-            name="staff"
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="">Select Staff</option>
-            {staff.map((staff) => (
-              <option key={staff.id} value={staff.id}>
-                {staff.user_name}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Advance Salary" : "Edit Advance Salary"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="staff" className="text-[#101023] font-medium">Staff ID</Label>
+                <Select value={formData.staff} onValueChange={(value) => setFormData(prev => ({...prev, staff: value}))}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Staff" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {staff.map((staffMember) => (
+                      <SelectItem key={staffMember.id} value={staffMember.id}>
+                        {staffMember.user_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="form-group">
-          <label>Date:</label>
-          <input
-            type="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="date" className="text-[#101023] font-medium">Date</Label>
+                <Input
+                  type="date"
+                  id="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  name="date"
+                  className="w-full"
+                />
+              </div>
 
-        
+              <div className="space-y-2">
+                <Label htmlFor="advance_amount_in_cash" className="text-[#101023] font-medium">Advance Salary Amount (cash)</Label>
+                <Input
+                  type="number"
+                  id="advance_amount_in_cash"
+                  value={formData.advance_amount_in_cash || 0}
+                  name="advance_amount_in_cash"
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Advance Salary Amount (cash):</label>
-          <input
-            type="number"
-            value={formData.advance_amount_in_cash || 0}
-            name="advance_amount_in_cash"
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="advance_amount_in_bank" className="text-[#101023] font-medium">Advance Salary Amount (bank)</Label>
+                <Input
+                  type="number"
+                  id="advance_amount_in_bank"
+                  value={formData.advance_amount_in_bank || 0}
+                  name="advance_amount_in_bank"
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Advance Salary Amount (bank):</label>
-          <input
-            type="number"
-            value={formData.advance_amount_in_bank || 0}
-            name="advance_amount_in_bank"
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="total_amount" className="text-[#101023] font-medium">Total Amount</Label>
+                <Input
+                  name="total_amount"
+                  type="number"
+                  value={formData.total_amount || 0}
+                  disabled
+                  className="w-full bg-gray-100"
+                />
+              </div>
 
-        
-        <div className="form-group">
-          <label>Total Amount:</label>
-          <input
-            name="total_amount"
-            type="number"
-            value={formData.total_amount || 0}
-            disabled
-            className="form-input"
-          />
-        </div>
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
 
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
-
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Advance Salary" : "Update Advance Salary"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/advance-salaries')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Advance Salary" : "Update Advance Salary"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

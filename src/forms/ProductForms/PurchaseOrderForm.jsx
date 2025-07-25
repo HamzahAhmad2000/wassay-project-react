@@ -6,8 +6,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import DateEventsDisplay from "/src/components/DateEventsDisplay";
 import { getImagePreviewSrc } from "/src/utils/imageUtil";
-
-
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Checkbox } from "../../additionalOriginuiComponents/ui/checkbox";
 
 const PurchaseOrderForm = () => {
   
@@ -238,308 +242,339 @@ const PurchaseOrderForm = () => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">Create Purchase Order</h2>
-      {formError && <p className="error-text">{formError}</p>}
-      {formSuccess && <p className="success-text">{formSuccess}</p>}
-      <form className="company-form" onSubmit={handleSubmit}>
-        {/* Company */}
-        {user && user.is_superuser && (
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-6xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              Create Purchase Order
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {formError && <p className="text-red-600 text-sm mb-4">{formError}</p>}
+            {formSuccess && <p className="text-green-600 text-sm mb-4">{formSuccess}</p>}
+            
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Company */}
+                {user && user.is_superuser && (
+                  <div className="space-y-2">
+                    <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                    <Select
+                      value={formData.company}
+                      onValueChange={(value) => setFormData(prev => ({...prev, company: value}))}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a company" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {companies.map((company) => (
+                          <SelectItem key={company.id} value={company.id}>
+                            {company.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
-          <div className="form-group">
-            <label htmlFor="company">Company</label>
-            <select
-              id="company"
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select a company</option>
-              {companies.map((company) => (
-                <option key={company.id} value={company.id}>
-                  {company.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          )}
+                {/* Warehouse */}
+                {user && !user.warehouse && (
+                  <div className="space-y-2">
+                    <Label htmlFor="warehouse" className="text-[#101023] font-medium">Warehouse</Label>
+                    <Select
+                      value={formData.warehouse}
+                      onValueChange={(value) => setFormData(prev => ({...prev, warehouse: value}))}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a warehouse" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {warehouses.map((warehouse) => (
+                          <SelectItem key={warehouse.id} value={warehouse.id}>
+                            {warehouse.address}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
-        {/* Warehouse */}
-        {user && !user.warehouse && (
+                {/* Branch */}
+                {user && !user.branch && (
+                  <div className="space-y-2">
+                    <Label htmlFor="branch" className="text-[#101023] font-medium">Branch</Label>
+                    <Select
+                      value={formData.branch}
+                      onValueChange={(value) => setFormData(prev => ({...prev, branch: value}))}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {branches.map((branch) => (
+                          <SelectItem key={branch.id} value={branch.id}>
+                            {branch.address}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
-          <div className="form-group">
-            <label htmlFor="warehouse">Warehouse</label>
-            <select
-              id="warehouse"
-              name="warehouse"
-              value={formData.warehouse}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select a warehouse</option>
-              {warehouses.map((warehouse) => (
-                <option key={warehouse.id} value={warehouse.id}>
-                  {warehouse.address}
-                </option>
-              ))}
-            </select>
-          </div>
-          )}
-
-        {/* Branch */}
-        {user && !user.branch && (
-          <div className="form-group">
-            <label htmlFor="branch">Branch</label>
-            <select
-              id="branch"
-              name="branch"
-              value={formData.branch}
-              onChange={handleChange}
-              className="form-input"
-            >
-              <option value="">Select a branch</option>
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.address}
-                </option>
-              ))}
-            </select>
-          </div>
-          )}
-
-        {/* Supplier */}
-        <div className="form-group">
-          <label htmlFor="supplier">Supplier</label>
-          <select
-            id="supplier"
-            name="supplier"
-            value={formData.supplier}
-            onChange={(e)=>{
-              handleChange(e)
-              handleSupplierPaymentChange(e)
-            }}
-            className="form-input"
-          >
-            <option value="">Select a supplier</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier.id} value={supplier.id}>
-                {supplier.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Delivery Date */}
-        <div className="form-group">
-          <label htmlFor="deliveryDate">Delivery Date</label>
-          <input
-            type="date"
-            id="deliveryDate"
-            name="deliveryDate"
-            value={formData.deliveryDate}
-            onChange={handleChange}
-            className="form-input"
-          />
-
-          <DateEventsDisplay
-              date={formData.deliveryDate}
-              className="text-gray-600"
-            />
-        </div>
-
-        {/* Products Section */}
-        <div className="mt-8 mb-8 p-4 border border-gray-200 rounded-lg">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Products</h3>
-            <button 
-              type="button" 
-              onClick={handleAddProduct}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
-            >
-              + Add Product
-            </button>
-          </div>
-          
-          {formData.products.map((product, index) => (
-            <div key={index} className="bg-gray-50 p-4 mb-4 rounded-lg">
-              <div className="grid grid-cols-[2fr_1fr_1fr_auto] gap-4 items-end">
-                <div className="flex flex-col">
-                  <label className="mb-1 text-sm text-gray-600">Product</label>
-                  <select
-                    value={product.product.id}
-                    onChange={(e) => handleProductChange(index, "product", e.target.value)}
-                    className="form-input w-full rounded border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                {/* Supplier */}
+                <div className="space-y-2">
+                  <Label htmlFor="supplier" className="text-[#101023] font-medium">Supplier</Label>
+                  <Select
+                    value={formData.supplier}
+                    onValueChange={(value) => {
+                      setFormData(prev => ({...prev, supplier: value}));
+                      setAdvancePaymentFormData(prev => ({...prev, supplier: value}));
+                    }}
                   >
-                    <option value={""}>Select a product</option>
-                    {products.map((prod) => (
-                      <option key={prod.id} value={prod.id}>
-                        {prod.product_name} {prod.packaging_weight? `- ${prod.packaging_weight}` : ""}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a supplier" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {suppliers.map((supplier) => (
+                        <SelectItem key={supplier.id} value={supplier.id}>
+                          {supplier.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div className="flex flex-col">
-                  <label className="mb-1 text-sm text-gray-600">Quantity</label>
-                  <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    placeholder="Quantity"
-                    value={product.quantity}
-                    onChange={(e) => handleProductChange(index, "quantity", Math.max(1, e.target.value))}
-                    className="form-input w-full rounded border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                {/* Delivery Date */}
+                <div className="space-y-2">
+                  <Label htmlFor="deliveryDate" className="text-[#101023] font-medium">Delivery Date</Label>
+                  <Input
+                    type="date"
+                    id="deliveryDate"
+                    name="deliveryDate"
+                    value={formData.deliveryDate}
+                    onChange={handleChange}
+                    className="w-full"
+                  />
+                  <DateEventsDisplay
+                    date={formData.deliveryDate}
+                    className="text-gray-600 text-sm"
                   />
                 </div>
-
-                <button 
-                  type="button" 
-                  onClick={() => handleRemoveProduct(index)}
-                  className="w-8 h-8 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center transition-colors"
-                  aria-label="Remove product"
-                >
-                  ×
-                </button>
               </div>
-            </div>
-          ))}
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            className="form-input"
-            required
-            onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
-          />
-          
-          {formData.image &&
-            // Display the image preview if an image is selected
-            <img src={getImagePreviewSrc(formData.image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-          }
-        </div>
+              {/* Products Section */}
+              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-[#101023]">Products</h3>
+                  <Button 
+                    type="button" 
+                    onClick={handleAddProduct}
+                    className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                  >
+                    + Add Product
+                  </Button>
+                </div>
+                
+                {formData.products.map((product, index) => (
+                  <div key={index} className="bg-white p-4 mb-4 rounded-lg shadow">
+                    <div className="grid grid-cols-[2fr_1fr_1fr_auto] gap-4 items-end">
+                      <div className="space-y-2">
+                        <Label className="text-[#101023] font-medium">Product</Label>
+                        <Select
+                          value={product.product.id}
+                          onValueChange={(value) => handleProductChange(index, "product", value)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a product" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {products.map((prod) => (
+                              <SelectItem key={prod.id} value={prod.id}>
+                                {prod.product_name} {prod.packaging_weight? `- ${prod.packaging_weight}` : ""}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-        
-        <div>
-          <input type="checkbox" id="advancePayment" name="advancePayment" checked={advancePayment} onChange={(e) => setAdvancePayment(e.target.checked)} />
-          <label htmlFor="advancePayment" className="ml-2">Advance Payment</label>
-        </div>
+                      <div className="space-y-2">
+                        <Label className="text-[#101023] font-medium">Quantity</Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          step="1"
+                          placeholder="Quantity"
+                          value={product.quantity}
+                          onChange={(e) => handleProductChange(index, "quantity", Math.max(1, e.target.value))}
+                          className="w-full"
+                        />
+                      </div>
 
+                      <Button 
+                        type="button" 
+                        onClick={() => handleRemoveProduct(index)}
+                        variant="outline"
+                        size="sm"
+                        className="border-red-500 text-red-700 hover:bg-red-500 hover:text-white"
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-        {advancePayment && ( <>
-          <div>
-          <label className="block text-sm font-medium text-gray-700">Payment Method</label>
-          <select
-            name="payment_method"
-            value={advancePaymentFormData.payment_method || 'CASH'}
-            onChange={handleSupplierPaymentChange}
-            className="form-input"
-          >
-            <option value="CASH">Cash</option>
-            <option value="BANK">Bank Transfer</option>
-            <option value="MOBILE">Mobile Payment</option>
-            <option value="CHEQUE">Cheque</option>
-          </select>
-        </div>
-        {advancePaymentFormData.payment_method === 'CASH' ? (
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Amount</label>
-                <input
-                    type="number"
-                    name="amount_in_cash"
-                    value={advancePaymentFormData.amount_in_cash || 0}
-                    onChange={handleSupplierPaymentChange}
-                    step="0.01"
-                    min="0"
-                    className="form-input"
-                    placeholder="Enter amount"
-                    />
-            </div>
-        ):(        
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Amount</label>
-                <input
-                    type="number"
-                    name="amount_in_bank"
-                    value={advancePaymentFormData.amount_in_bank || 0}
-                    onChange={handleSupplierPaymentChange}
-                    step="0.01"
-                    min="0"
-                    className="form-input"
-                    placeholder="Enter amount"
+              <div className="space-y-2">
+                <Label htmlFor="image" className="text-[#101023] font-medium">Image</Label>
+                <Input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  className="w-full"
+                  onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                 />
-            </div>
-        )}
+                
+                {formData.image && (
+                  <img 
+                    src={getImagePreviewSrc(formData.image)} 
+                    alt="Preview" 
+                    className="mt-2 w-32 h-32 object-cover rounded-md" 
+                  />
+                )}
+              </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Payment Date</label>
-          <input
-            type="date"
-            name="payment_date"
-            value={advancePaymentFormData.payment_date}
-            onChange={(e)=>{
-              handleSupplierPaymentChange(e)
-            }}
-            className="form-input"
-          />
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="advancePayment"
+                  checked={advancePayment}
+                  onCheckedChange={(checked) => setAdvancePayment(checked)}
+                />
+                <Label htmlFor="advancePayment" className="text-[#101023]">Advance Payment</Label>
+              </div>
 
-         <DateEventsDisplay
-              date={advancePaymentFormData.payment_date}
-              className="text-gray-600"
-            />
-        </div>
+              {advancePayment && (
+                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-4">
+                  <h3 className="text-lg font-semibold text-[#101023]">Advance Payment Details</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="payment_method" className="text-[#101023] font-medium">Payment Method</Label>
+                      <Select
+                        value={advancePaymentFormData.payment_method || 'CASH'}
+                        onValueChange={(value) => setAdvancePaymentFormData(prev => ({...prev, payment_method: value}))}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select Payment Method" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="CASH">Cash</SelectItem>
+                          <SelectItem value="BANK">Bank Transfer</SelectItem>
+                          <SelectItem value="MOBILE">Mobile Payment</SelectItem>
+                          <SelectItem value="CHEQUE">Cheque</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Notes</label>
-          <textarea
-            name="notes"
-            value={advancePaymentFormData.notes}
-            onChange={handleSupplierPaymentChange}
-            className="form-input"
-            rows="4"
-            placeholder="Enter any notes"
-          />
-        </div>
+                    {advancePaymentFormData.payment_method === 'CASH' ? (
+                      <div className="space-y-2">
+                        <Label htmlFor="amount_in_cash" className="text-[#101023] font-medium">Amount</Label>
+                        <Input
+                          type="number"
+                          name="amount_in_cash"
+                          value={advancePaymentFormData.amount_in_cash || 0}
+                          onChange={handleSupplierPaymentChange}
+                          step="0.01"
+                          min="0"
+                          className="w-full"
+                          placeholder="Enter amount"
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <Label htmlFor="amount_in_bank" className="text-[#101023] font-medium">Amount</Label>
+                        <Input
+                          type="number"
+                          name="amount_in_bank"
+                          value={advancePaymentFormData.amount_in_bank || 0}
+                          onChange={handleSupplierPaymentChange}
+                          step="0.01"
+                          min="0"
+                          className="w-full"
+                          placeholder="Enter amount"
+                        />
+                      </div>
+                    )}
 
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            required
+                    <div className="space-y-2">
+                      <Label htmlFor="payment_date" className="text-[#101023] font-medium">Payment Date</Label>
+                      <Input
+                        type="date"
+                        name="payment_date"
+                        value={advancePaymentFormData.payment_date}
+                        onChange={handleSupplierPaymentChange}
+                        className="w-full"
+                      />
+                      <DateEventsDisplay
+                        date={advancePaymentFormData.payment_date}
+                        className="text-gray-600 text-sm"
+                      />
+                    </div>
 
-            className="form-input"
-            onChange={handleSupplierPaymentChange}
-          />
-          
-          {advancePayment.image &&
-            // Display the image preview if an image is selected
-            <img src={getImagePreviewSrc(advancePayment.image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-          }
-        </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="notes" className="text-[#101023] font-medium">Notes</Label>
+                      <textarea
+                        name="notes"
+                        value={advancePaymentFormData.notes}
+                        onChange={handleSupplierPaymentChange}
+                        className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent"
+                        rows="4"
+                        placeholder="Enter any notes"
+                      />
+                    </div>
 
+                    <div className="space-y-2">
+                      <Label htmlFor="payment_image" className="text-[#101023] font-medium">Payment Image</Label>
+                      <Input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        className="w-full"
+                        onChange={handleSupplierPaymentChange}
+                      />
+                      
+                      {advancePaymentFormData.image && (
+                        <img 
+                          src={getImagePreviewSrc(advancePaymentFormData.image)} 
+                          alt="Preview" 
+                          className="mt-2 w-32 h-32 object-cover rounded-md" 
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
-        <button
-          type="submit"
-          className={`w-full py-2 px-4 rounded-md text-white font-medium `}
-        >
-          {'Save Payment'}
-        </button>
-        </>
-
-        )}
-
-        {/* Submit */}
-        <button type="submit" className="submit-button">
-          Submit
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/purchase-orders")}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  Submit
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

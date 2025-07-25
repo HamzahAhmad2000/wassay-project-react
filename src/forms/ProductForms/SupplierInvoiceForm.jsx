@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import "/src/styles/FormStyles.css"; // Ensure this CSS file contains the provided styles
 import { getProducts, getSuppliers, postSupplierInvoice, postSupplierPayment } from "/src/APIs/ProductAPIs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getPurchaseOrders } from "/src/APIs/ProductAPIs";
@@ -7,6 +6,13 @@ import { getSupplierPaymentsAgainstPurchaseOrder } from "/src/APIs/ProductAPIs";
 import { toast } from "react-toastify";
 import DateEventsDisplay from "/src/components/DateEventsDisplay";
 import { getImagePreviewSrc } from "/src/utils/imageUtil";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Textarea } from "../../additionalOriginuiComponents/ui/textarea";
+
 const SupplierInvoiceForm = () => {
   
   const { state } = useLocation();
@@ -63,10 +69,7 @@ const SupplierInvoiceForm = () => {
     });
 },[])
 
-
-
   const handleSupplierPaymentChange = (e) => {
-
     const { name, value, type, files } = e.target;
     if (type === "file") {
       // Handle file input
@@ -111,7 +114,6 @@ const SupplierInvoiceForm = () => {
     }
     setFormData((prev)=>({ ...prev, [name]: value }));
   };
-
 
   const handleAddProduct = () => {
     setFormData((prev) => ({
@@ -212,27 +214,6 @@ const SupplierInvoiceForm = () => {
     if(formData.image) {
       sendData.append("supplier_invoice[image]", formData.image);
     }
-  // const submissionData = {
-  //   supplier_invoice: {
-  //     supplier: formData.supplier,
-  //     purchase_order: formData?.purchase_order,
-  //     shipping_expense: parseFloat(formData.shipping_expense).toFixed(2),
-  //     due_date: formData.due_date,
-  //     invoice_date: formData.invoice_date,
-  //     invoice_number: formData.invoice_number,
-  //     payment_status: formData.payment_status,
-  //     total_amount: parseFloat(total_cost),
-  //   },
-  //    invoice_items: formData.products.map(product => ({
-  //     product: product?.product?.id || product?.product,
-  //     quantity: parseFloat(product.quantity).toFixed(2),
-  //     price: parseFloat(product.price).toFixed(2),
-  //     discount: parseFloat(product.discount).toFixed(2),
-  //     tax: parseFloat(product.tax).toFixed(2),
-  //     total_price: parseFloat(product.total_price).toFixed(2),
-  //     subtotal: parseFloat(product.subtotal).toFixed(2),
-  //   })),
-  // };
 
   try {
     // Submit Supplier Invoice first
@@ -283,419 +264,409 @@ const SupplierInvoiceForm = () => {
   }
 };
 
-
   return (
-    <div className="form-container">
-      <h2 className="form-heading">Create Supplier Invoice</h2>
-      {formError && <p className="error-text">{formError}</p>}
-      {formSuccess && <p className="success-text">{formSuccess}</p>}
-      <form className="supplier-form" onSubmit={handleSubmit}>
-       
-        {/* Supplier */}
-        <div className="form-group">
-          <label htmlFor="supplier">Supplier</label>
-          <select
-            id="supplier"
-            name="supplier"
-            value={formData.supplier}
-            onChange={(e)=>{
-              handleChange(e)
-              handleSupplierPaymentChange(e)
-            }}
-            className="form-input"
-          >
-            <option value="">Select a supplier</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier.id} value={supplier.id}>
-                {supplier.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Supplier */}
-        <div className="form-group">
-          <label htmlFor="purchase_order">Purchase Order</label>
-          <select
-            id="purchase_order"
-            name="purchase_order"
-            value={formData.purchase_order}
-            onChange={(e)=>{
-              handleChange(e)
-              handleSupplierPaymentChange(e)
-            }}
-            className="form-input"
-          >
-            <option value="">Select a Purchase Order</option>
-            {filteredPurchaseOrders.map((order) => (
-              <option key={order.purchase_order.id} value={order.purchase_order.id}>
-                {order.purchase_order.id} - {order.purchase_order.purchase_order_number}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Delivery Date */}
-        <div className="form-group">
-          <label htmlFor="invoice_number">Invoice Number</label>
-          <input
-            type="text"
-            id="invoice_number"
-            name="invoice_number"
-            value={formData.invoice_number}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="invoice_date">Invoice Date</label>
-          <input
-            type="date"
-            id="invoice_date"
-            name="invoice_date"
-            value={formData.invoice_date}
-            onChange={handleChange}
-            className="form-input"
-          />
-          
-          <DateEventsDisplay
-              date={formData.invoice_date}
-              className="text-gray-600"
-            />
-        </div>
-
-
-        <div className="form-group">
-          <label htmlFor="due_date">Due Date</label>
-          <input
-            type="date"
-            id="due_date"
-            name="due_date"
-            value={formData.due_date}
-            onChange={handleChange}
-            className="form-input"
-          />
-
-          <DateEventsDisplay
-              date={formData.due_date}
-              className="text-gray-600"
-            />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="shipping_expense">Shipping Expense</label>
-          <input
-            type="number"
-            id="shipping_expense"
-            min={0}
-            name="shipping_expense"
-            value={formData.shipping_expense}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
-
-
-        {/* Products Section */}
-        <div className="mt-8 mb-8 p-4 border border-gray-200 rounded-lg">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Products</h3>
-            <button 
-              type="button" 
-              onClick={handleAddProduct}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
-            >
-              + Add Product
-            </button>
-          </div>
-          
-          {formData.products.map((product, index) => (
-            <div key={index} className="bg-gray-50 p-4 mb-4 rounded-lg">
-
-              <div className="grid grid-cols-[2fr_1fr_1fr_auto] gap-4 items-end">
-                <div className="flex flex-col">
-                  <label className="mb-1 text-sm text-gray-600">Product</label>
-                  <select
-                    value={product.product.id}
-                    onChange={(e) => handleProductChange(index, "product", e.target.value)}
-                    className="form-input w-full rounded border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value={""}>Select a product</option>
-                    {products.map((prod) => (
-                      <option key={prod.id} value={prod.id}>
-                        {prod.product_name} {prod.packaging_weight? `- ${prod.packaging_weight}` : ""}
-                      </option>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-6xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              Create Supplier Invoice
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {formError && <p className="text-red-600 text-sm mb-4">{formError}</p>}
+            {formSuccess && <p className="text-green-600 text-sm mb-4">{formSuccess}</p>}
+            
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {/* Supplier */}
+              <div className="space-y-2">
+                <Label htmlFor="supplier" className="text-[#101023] font-medium">
+                  Supplier
+                </Label>
+                <Select value={formData.supplier} onValueChange={(value) => {
+                  handleChange({ target: { name: 'supplier', value } });
+                  handleSupplierPaymentChange({ target: { name: 'supplier', value } });
+                }}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a supplier" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {suppliers.map((supplier) => (
+                      <SelectItem key={supplier.id} value={supplier.id}>
+                        {supplier.name}
+                      </SelectItem>
                     ))}
-                  </select>
-                </div>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                <div className="flex flex-col">
-                  <label className="mb-1 text-sm text-gray-600">Quantity Ordered</label>
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="Quantity Ordered"
-                    disabled
-                    value={product.quantity_ordered}
-                    onChange={(e) => handleProductChange(index, "quantity_ordered", Math.max(1, e.target.value))}
-                    className="form-input w-25 rounded border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="mb-1 text-sm text-gray-600">Previously Received Quantity</label>
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="Previously Received Quantity"
-                    disabled
-                    value={product.previously_received}
-                    // onChange={(e) => handleProductChange(index, "quantity_ordered", Math.max(1, e.target.value))}
-                    className="form-input w-25 rounded border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="mb-1 text-sm text-gray-600">Quantity Received</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Quantity"
-                    value={product.quantity}
-                    onChange={(e) => handleProductChange(index, "quantity", Math.max(0, e.target.value))}
-                    className="form-input w-25 rounded border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
+              {/* Purchase Order */}
+              <div className="space-y-2">
+                <Label htmlFor="purchase_order" className="text-[#101023] font-medium">
+                  Purchase Order
+                </Label>
+                <Select value={formData.purchase_order} onValueChange={(value) => {
+                  handleChange({ target: { name: 'purchase_order', value } });
+                  handleSupplierPaymentChange({ target: { name: 'purchase_order', value } });
+                }}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a Purchase Order" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredPurchaseOrders.map((order) => (
+                      <SelectItem key={order.purchase_order.id} value={order.purchase_order.id}>
+                        {order.purchase_order.id} - {order.purchase_order.purchase_order_number}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                <div className="flex flex-col">
-                  <label className="mb-1 text-sm text-gray-600">Total Cost</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Total Cost"
-                    value={product.total_price}
-                    onChange={(e) => handleProductChange(index, "total_price", Math.max(0, e.target.value))}
-                    className="form-input w-full rounded border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
+              {/* Invoice Number */}
+              <div className="space-y-2">
+                <Label htmlFor="invoice_number" className="text-[#101023] font-medium">
+                  Invoice Number
+                </Label>
+                <Input
+                  id="invoice_number"
+                  type="text"
+                  value={formData.invoice_number}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
 
+              {/* Invoice Date */}
+              <div className="space-y-2">
+                <Label htmlFor="invoice_date" className="text-[#101023] font-medium">
+                  Invoice Date
+                </Label>
+                <Input
+                  id="invoice_date"
+                  type="date"
+                  value={formData.invoice_date}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+                <DateEventsDisplay
+                  date={formData.invoice_date}
+                  className="text-gray-600"
+                />
+              </div>
 
-                <div className="flex flex-col">
-                  <label className="mb-1 text-sm text-gray-600">Discount</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Discount Amount"
-                    value={product.discount}
-                    onChange={(e) => handleProductChange(index, "discount", Math.max(0, e.target.value))}
-                    className="form-input w-full rounded border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
+              {/* Due Date */}
+              <div className="space-y-2">
+                <Label htmlFor="due_date" className="text-[#101023] font-medium">
+                  Due Date
+                </Label>
+                <Input
+                  id="due_date"
+                  type="date"
+                  value={formData.due_date}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+                <DateEventsDisplay
+                  date={formData.due_date}
+                  className="text-gray-600"
+                />
+              </div>
+
+              {/* Shipping Expense */}
+              <div className="space-y-2">
+                <Label htmlFor="shipping_expense" className="text-[#101023] font-medium">
+                  Shipping Expense
+                </Label>
+                <Input
+                  id="shipping_expense"
+                  type="number"
+                  min={0}
+                  value={formData.shipping_expense}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Products Section */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-[#101023]">Products</h3>
+                  <Button 
+                    type="button" 
+                    onClick={handleAddProduct}
+                    className="bg-green-500 text-white hover:bg-green-600"
+                  >
+                    + Add Product
+                  </Button>
                 </div>
                 
+                {formData.products.map((product, index) => (
+                  <div key={index} className="bg-white p-4 mb-4 rounded-lg border">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-600">Product</Label>
+                        <Select value={product.product.id} onValueChange={(value) => handleProductChange(index, "product", value)}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a product" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {products.map((prod) => (
+                              <SelectItem key={prod.id} value={prod.id}>
+                                {prod.product_name} {prod.packaging_weight? `- ${prod.packaging_weight}` : ""}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                <div className="flex flex-col">
-                  <label className="mb-1 text-sm text-gray-600">Tax</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Tax Amount"
-                    value={product.tax}
-                    onChange={(e) => handleProductChange(index, "tax", Math.max(0, e.target.value))}
-                    className="form-input w-full rounded border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-600">Quantity Ordered</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          disabled
+                          value={product.quantity_ordered}
+                          className="w-full"
+                        />
+                      </div>
 
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-600">Previously Received</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          disabled
+                          value={product.previously_received}
+                          className="w-full"
+                        />
+                      </div>
 
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-600">Quantity Received</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={product.quantity}
+                          onChange={(e) => handleProductChange(index, "quantity", Math.max(0, e.target.value))}
+                          className="w-full"
+                        />
+                      </div>
 
-                <button 
-                  type="button" 
-                  onClick={() => handleRemoveProduct(index)}
-                  className="w-8 h-8 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center transition-colors"
-                  aria-label="Remove product"
-                >
-                  ×
-                </button>
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-600">Total Cost</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={product.total_price}
+                          onChange={(e) => handleProductChange(index, "total_price", Math.max(0, e.target.value))}
+                          className="w-full"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-600">Discount</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={product.discount}
+                          onChange={(e) => handleProductChange(index, "discount", Math.max(0, e.target.value))}
+                          className="w-full"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm text-gray-600">Tax</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={product.tax}
+                          onChange={(e) => handleProductChange(index, "tax", Math.max(0, e.target.value))}
+                          className="w-full"
+                        />
+                      </div>
+
+                      <Button 
+                        type="button" 
+                        onClick={() => handleRemoveProduct(index)}
+                        className="w-8 h-8 bg-red-500 text-white rounded-full hover:bg-red-600"
+                        aria-label="Remove product"
+                      >
+                        ×
+                      </Button>
+                    </div>
+                    
+                    <div className="text-right mt-2 text-sm text-gray-600">
+                      Subtotal: {new Intl.NumberFormat('en-US', { 
+                        style: 'currency', 
+                        currency: 'PKR' 
+                      }).format(((product.quantity * product.price)- product.discount + product.tax) || 0)}
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              
-              
-              <div className="text-right mt-2 text-sm text-gray-600">
-                Subtotal: {new Intl.NumberFormat('en-US', { 
-                  style: 'currency', 
-                  currency: 'PKR' 
-                }).format(((product.quantity * product.price)- product.discount + product.tax) || 0)}
-              </div>
-            </div>
-
-          ))}
-        </div>
-
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            className="form-input"
-            required
-
-            onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
-          />
-          {formData.image &&
-            // Display the image preview if an image is selected
-            <img src={formData.image ? URL.createObjectURL(formData.image) : ""} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-          }
-        </div>
-
-
-         {/* Payment Status */}
-         <div className="form-group">
-          <label htmlFor="payment_status">Payment Status</label>
-          <select
-            id="payment_status"
-            name="payment_status"
-            value={formData.payment_status}
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="">Select a Payment Status</option>
-              
-            <option value={"ADVANCE"}>
-                Advance
-              </option>
-              <option value={"On Receiving"}>
-                On Receiving
-              </option>
-              <option value={"Credit"}>
-                Credit
-              </option>
-              
-          </select>
-        </div>
-
-
-        {/* Total Cost */}
-        <div className="bg-gray-50 p-4 rounded-lg mt-4">
-          <label className="block text-gray-600">Total Cost</label>
-          <p className="text-xl font-bold text-blue-500">
-            {new Intl.NumberFormat('en-US', { 
-              style: 'currency', 
-              currency: 'USD' 
-            }).format(formData.totalCost || 0)}
-          </p>
-        </div>
-
-        {formData.payment_status && formData.payment_status == 'On Receiving' &&( <>
-          <div>
-          <label className="block text-sm font-medium text-gray-700">Payment Method</label>
-          <select
-            name="payment_method"
-            value={supplierPayment.payment_method || 'CASH'}
-            onChange={handleSupplierPaymentChange}
-            className="form-input"
-          >
-            <option value="CASH">Cash</option>
-            <option value="BANK">Bank Transfer</option>
-            <option value="MOBILE">Mobile Payment</option>
-            <option value="CHEQUE">Cheque</option>
-          </select>
-        </div>
-        {supplierPayment.payment_method === 'CASH' ? (
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Amount</label>
-                <input
-                    type="number"
-                    name="amount_in_cash"
-                    value={supplierPayment.amount_in_cash || 0}
-                    onChange={handleSupplierPaymentChange}
-                    step="0.01"
-                    min="0"
-                    className="form-input"
-                    placeholder="Enter amount"
-                    />
-            </div>
-        ):(        
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Amount</label>
-                <input
-                    type="number"
-                    name="amount_in_bank"
-                    value={supplierPayment.amount_in_bank || 0}
-                    onChange={handleSupplierPaymentChange}
-                    step="0.01"
-                    min="0"
-                    className="form-input"
-                    placeholder="Enter amount"
+              {/* Image Upload */}
+              <div className="space-y-2">
+                <Label className="text-[#101023] font-medium">Image</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  required
+                  onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
+                  className="w-full"
                 />
-            </div>
-        )}
+                {formData.image && (
+                  <img src={formData.image ? URL.createObjectURL(formData.image) : ""} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
+                )}
+              </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Payment Date</label>
-          <input
-            type="date"
-            name="payment_date"
-            value={supplierPayment.payment_date}
-            onChange={handleSupplierPaymentChange}
-            className="form-input"
-          />
-          <DateEventsDisplay
-              date={supplierPayment.payment_date}
-              className="text-gray-600"
-            />
-        </div>
+              {/* Payment Status */}
+              <div className="space-y-2">
+                <Label htmlFor="payment_status" className="text-[#101023] font-medium">
+                  Payment Status
+                </Label>
+                <Select value={formData.payment_status} onValueChange={(value) => handleChange({ target: { name: 'payment_status', value } })}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a Payment Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ADVANCE">Advance</SelectItem>
+                    <SelectItem value="On Receiving">On Receiving</SelectItem>
+                    <SelectItem value="Credit">Credit</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Notes</label>
-          <textarea
-            name="notes"
-            value={supplierPayment.notes}
-            onChange={handleSupplierPaymentChange}
-            className="form-input"
-            rows="4"
-            placeholder="Enter any notes"
-          />
-        </div>
+              {/* Total Cost */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <Label className="text-gray-600">Total Cost</Label>
+                <p className="text-xl font-bold text-blue-500">
+                  {new Intl.NumberFormat('en-US', { 
+                    style: 'currency', 
+                    currency: 'USD' 
+                  }).format(formData.totalCost || 0)}
+                </p>
+              </div>
 
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            required
+              {/* Payment Section for On Receiving */}
+              {formData.payment_status && formData.payment_status === 'On Receiving' && (
+                <div className="border border-gray-200 rounded-lg p-6 bg-gray-50 space-y-4">
+                  <h3 className="text-lg font-semibold text-[#101023]">Payment Details</h3>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-[#101023] font-medium">Payment Method</Label>
+                    <Select value={supplierPayment.payment_method} onValueChange={(value) => handleSupplierPaymentChange({ target: { name: 'payment_method', value } })}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="CASH">Cash</SelectItem>
+                        <SelectItem value="BANK">Bank Transfer</SelectItem>
+                        <SelectItem value="MOBILE">Mobile Payment</SelectItem>
+                        <SelectItem value="CHEQUE">Cheque</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            className="form-input"
-            onChange={handleSupplierPaymentChange}
-          />
-          
-          {formData.image &&
-            // Display the image preview if an image is selected
-            <img src={getImagePreviewSrc(formData.image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-          }
-        </div>
+                  {supplierPayment.payment_method === 'CASH' ? (
+                    <div className="space-y-2">
+                      <Label className="text-[#101023] font-medium">Amount</Label>
+                      <Input
+                        type="number"
+                        name="amount_in_cash"
+                        value={supplierPayment.amount_in_cash || 0}
+                        onChange={handleSupplierPaymentChange}
+                        step="0.01"
+                        min="0"
+                        className="w-full"
+                        placeholder="Enter amount"
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label className="text-[#101023] font-medium">Amount</Label>
+                      <Input
+                        type="number"
+                        name="amount_in_bank"
+                        value={supplierPayment.amount_in_bank || 0}
+                        onChange={handleSupplierPaymentChange}
+                        step="0.01"
+                        min="0"
+                        className="w-full"
+                        placeholder="Enter amount"
+                      />
+                    </div>
+                  )}
 
+                  <div className="space-y-2">
+                    <Label className="text-[#101023] font-medium">Payment Date</Label>
+                    <Input
+                      type="date"
+                      name="payment_date"
+                      value={supplierPayment.payment_date}
+                      onChange={handleSupplierPaymentChange}
+                      className="w-full"
+                    />
+                    <DateEventsDisplay
+                      date={supplierPayment.payment_date}
+                      className="text-gray-600"
+                    />
+                  </div>
 
-        <button
-          type="submit"
-          className={`w-full py-2 px-4 rounded-md text-white font-medium `}
-        >
-          {'Save Payment'}
-        </button>
-        </>
+                  <div className="space-y-2">
+                    <Label className="text-[#101023] font-medium">Notes</Label>
+                    <Textarea
+                      name="notes"
+                      value={supplierPayment.notes}
+                      onChange={handleSupplierPaymentChange}
+                      className="w-full"
+                      rows="4"
+                      placeholder="Enter any notes"
+                    />
+                  </div>
 
-        )}
+                  <div className="space-y-2">
+                    <Label className="text-[#101023] font-medium">Payment Image</Label>
+                    <Input
+                      type="file"
+                      name="image"
+                      accept="image/*"
+                      required
+                      className="w-full"
+                      onChange={handleSupplierPaymentChange}
+                    />
+                    {formData.image && (
+                      <img src={getImagePreviewSrc(formData.image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
+                    )}
+                  </div>
+                </div>
+              )}
 
-        {/* Submit */}
-        <button type="submit" className="submit-button">
-          Submit
-        </button>
-      </form>
+              {/* Submit Buttons */}
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/supplier-invoices")}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  Submit
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

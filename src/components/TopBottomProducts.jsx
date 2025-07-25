@@ -20,56 +20,50 @@ const TopBottomProducts = () => {
   
 
     return (
-        <div className="p-4 bg-white shadow-md rounded-lg my-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4">Top & Bottom Selling Products</h2>
+        <div className="p-4 origin-ui-background shadow-md rounded-lg my-4">
+            <h2 className="text-lg font-semibold origin-ui-text mb-4" style={{ color: 'var(--color-tertiary-700)' }}>Top & Bottom Selling Products</h2>
 
             {loading && <Loader />}
 
             {!loading && productsData && (
-                <div className="grid md:grid-cols-2 gap-6">
-                    {/* Top 10 Products */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Top Products */}
                     <div>
-                        <h3 className="text-md font-medium text-green-600 mb-2">Top 10 Products</h3>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full border border-gray-200">
-                                <thead>
-                                    <tr className="bg-green-500 text-white">
-                                        <th className="px-4 py-2 text-left">Product</th>
-                                        <th className="px-4 py-2 text-right">Sold(Qty)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {productsData.top_10.map((product, index) => (
-                                        <tr key={index} className="border-t">
-                                            <td className="px-4 py-2">{product.product__product_name}</td>
-                                            <td className="px-4 py-2 text-right">{product.total_units_sold.toLocaleString()}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <h3 className="text-md font-semibold origin-ui-text mb-3" style={{ color: 'var(--color-tertiary-600)' }}>🏆 Top Selling Products</h3>
+                        <div className="space-y-2">
+                            {productsData.top_products?.map((product, index) => (
+                                <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                                    <div>
+                                        <p className="font-medium origin-ui-text">{product.name}</p>
+                                        <p className="text-sm text-muted-foreground">Quantity: {product.quantity_sold}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="font-semibold origin-ui-text" style={{ color: 'var(--color-tertiary-600)' }}>
+                                            ${product.revenue?.toLocaleString()}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
-                    {/* Bottom 10 Products */}
+                    {/* Bottom Products */}
                     <div>
-                        <h3 className="text-md font-medium text-red-600 mb-2">Bottom 10 Products</h3>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full border border-gray-200">
-                                <thead>
-                                    <tr className="bg-red-500 text-white">
-                                        <th className="px-4 py-2 text-left">Product</th>
-                                        <th className="px-4 py-2 text-right">Sold(Qty)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {productsData.bottom_10.map((product, index) => (
-                                        <tr key={index} className="border-t">
-                                            <td className="px-4 py-2">{product.product__product_name}</td>
-                                            <td className="px-4 py-2 text-right">{product.total_units_sold.toLocaleString()}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <h3 className="text-md font-semibold origin-ui-text mb-3" style={{ color: 'var(--color-tertiary-600)' }}>📉 Bottom Selling Products</h3>
+                        <div className="space-y-2">
+                            {productsData.bottom_products?.map((product, index) => (
+                                <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                                    <div>
+                                        <p className="font-medium origin-ui-text">{product.name}</p>
+                                        <p className="text-sm text-muted-foreground">Quantity: {product.quantity_sold}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="font-semibold origin-ui-text" style={{ color: 'var(--color-tertiary-600)' }}>
+                                            ${product.revenue?.toLocaleString()}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>

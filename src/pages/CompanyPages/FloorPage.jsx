@@ -6,6 +6,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SearchFilter from '../../components/SearchFilter';
+import { Button } from "../../additionalOriginuiComponents/ui/button";
 
 const FloorList = () => {
   const [floors, setFloors] = useState([]);
@@ -87,20 +88,24 @@ const FloorList = () => {
     company_name: floor.company_name || 'N/A',
     actions: (
       <div className="flex space-x-2">
-        <button
+        <Button
           onClick={() => handleUpdate(floor.id)}
-          className="inline-flex items-center px-2 py-1 border border-yellow-500 text-yellow-500 rounded hover:bg-yellow-500 hover:text-white focus:outline-none text-sm"
+          variant="outline"
+          size="sm"
+          className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
         >
           <Pencil className="h-4 w-4 mr-1" />
           Update
-        </button>
-        <button
-          className="inline-flex items-center px-2 py-1 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white focus:outline-none text-sm"
+        </Button>
+        <Button
           onClick={() => handleDelete(floor.id)}
+          variant="outline"
+          size="sm"
+          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
         >
           <Trash2 className="h-4 w-4 mr-1" />
           Delete
-        </button>
+        </Button>
       </div>
     ),
   }));
@@ -109,9 +114,10 @@ const FloorList = () => {
   if (error) return <div className="text-red-500 text-center mt-4">{error}</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-      <h1 className="text-2xl font-bold mb-4">Floors</h1>
+    <div className="p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-[#201b50] mb-2">Floors</h1>
+      </div>
       <SearchFilter
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -119,6 +125,7 @@ const FloorList = () => {
         onButtonClick={() => navigate('/add-floors')}
       />
       <ReusableTable headers={floorHeaders} data={floorData} />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 };

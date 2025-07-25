@@ -6,6 +6,11 @@ import PropTypes from 'prop-types';
 import { getHouseMadeProducts, getRawMaterials } from "/src/APIs/ProductAPIs";
 import { postIngredient } from "/src/APIs/ProductAPIs";
 import { toast } from "react-toastify";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const IngredientsForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -153,158 +158,180 @@ const IngredientsForm = ({ mode = "add" }) => {
     }
   };
 
-
   return (
-    <div className="form-container max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h2 className="form-heading text-2xl font-bold mb-6 text-blue-800">
-        {mode === "add" ? "Add Ingredients" : "Edit Ingredients"}
-      </h2>
-      
-      {/* Notification area */}
-      {error && (
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
-          <p className="font-medium">{error}</p>
-        </div>
-      )}
-      
-      {success && (
-        <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6">
-          <p className="font-medium">{success}</p>
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="product-form space-y-6">
-        {/* Product selection section */}
-        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-semibold mb-4 text-gray-800">1. Select Product Produced</h3>
-          
-          <div className="form-group">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Product Produced:</label>
-            <select
-              value={formData.product_produced}
-              name="product_produced"
-              onChange={handleChange}
-              className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="">-- Select Product Produced --</option>
-              {houseMadeProducts.map((product) => (
-                <option key={product.id} value={product.id}>
-                  {product.product_name} (ID: {product.id}) - {product.quantity_in_stock}g available
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        
-        {/* Products Section */}
-        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">2. Add raw Products</h3>
-            <button 
-              type="button" 
-              onClick={handleAddProduct}
-              disabled={!formData.product_produced}
-              className={`px-4 py-2 rounded-md text-white font-medium ${
-                !formData.product_produced 
-                  ? "bg-gray-400 cursor-not-allowed" 
-                  : "bg-blue-600 hover:bg-blue-700 transition-colors"
-              }`}
-            >
-              + Add Product
-            </button>
-          </div>
-          
-          {formData.product_produced && formData.products_used.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              <p>No products added yet. Click &quot;Add Product&quot; to start packaging.</p>
-            </div>
-          )}
-          
-          {!formData.product_produced && (
-            <div className="text-center py-8 text-gray-500">
-              <p>Please select an open product first</p>
-            </div>
-          )}
-          
-          {formData.products_used.map((product, index) => (
-            <div key={index} className="bg-white p-4 mb-4 rounded-lg shadow border border-gray-200">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="col-span-1 md:col-span-2 lg:col-span-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Product</label>
-                  <select
-                    value={product.product}
-                    onChange={(e) => handleProductChange(index, "product", e.target.value)}
-                    className={`form-input w-full rounded-md border ${
-                      !product.product ? "border-amber-300" : "border-gray-300"
-                    } focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Ingredients" : "Edit Ingredients"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Notification area */}
+            {error && (
+              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
+                <p className="font-medium">{error}</p>
+              </div>
+            )}
+            
+            {success && (
+              <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6">
+                <p className="font-medium">{success}</p>
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Product selection section */}
+              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">1. Select Product Produced</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="product_produced" className="text-[#101023] font-medium">
+                    Product Produced:
+                  </Label>
+                  <Select
+                    value={formData.product_produced}
+                    onValueChange={(value) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        product_produced: value,
+                        products_used: [],
+                      }));
+                      if (!value) {
+                        setRawMaterials([]);
+                      }
+                    }}
                   >
-                    <option value="">Select a product</option>
-                    {rawMaterials.map((prod) => (
-                      <option key={prod.id} value={prod.id}>
-                        {prod.product_name} {prod.packaging_weight ? `(${prod.packaging_weight}g)` : ""}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                  <div className="flex items-center">
-                    <input
-                      type="number"
-                      min="1"
-                      step="1"
-                      value={product.quantity}
-                      onChange={(e) => handleProductChange(index, "quantity", Math.max(1, parseInt(e.target.value || 1)))}
-                      className="form-input w-full text-center border-l-0 border-r-0 border-gray-300"
-                    />
-                  </div>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="-- Select Product Produced --" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {houseMadeProducts.map((product) => (
+                        <SelectItem key={product.id} value={product.id}>
+                          {product.product_name} (ID: {product.id}) - {product.quantity_in_stock}g available
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               
-              <div className="flex justify-between items-center mt-4">
-                <div className="text-sm">
-                  {product.product && rawMaterials.find(p => p.id == product.product)?.packaging_weight && (
-                    <span className="text-gray-600">
-                      Total weight: {(product.quantity * rawMaterials.find(p => p.id == product.product)?.packaging_weight).toFixed(2)}g
-                    </span>
-                  )}
+              {/* Products Section */}
+              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800">2. Add raw Products</h3>
+                  <Button 
+                    type="button" 
+                    onClick={handleAddProduct}
+                    disabled={!formData.product_produced}
+                    className={`${
+                      !formData.product_produced 
+                        ? "bg-gray-400 cursor-not-allowed" 
+                        : "bg-[#423e7f] hover:bg-[#201b50]"
+                    } text-white`}
+                  >
+                    + Add Product
+                  </Button>
                 </div>
                 
-                <button 
-                  type="button" 
-                  onClick={() => handleRemoveProduct(index)}
-                  className="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors"
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          ))}
-          
-        </div>
+                {formData.product_produced && formData.products_used.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No products added yet. Click "Add Product" to start packaging.</p>
+                  </div>
+                )}
+                
+                {!formData.product_produced && (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>Please select an open product first</p>
+                  </div>
+                )}
+                
+                {formData.products_used.map((product, index) => (
+                  <div key={index} className="bg-white p-4 mb-4 rounded-lg shadow border border-gray-200">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="col-span-1 md:col-span-2 lg:col-span-1">
+                        <Label className="text-[#101023] font-medium">Product</Label>
+                        <Select
+                          value={product.product}
+                          onValueChange={(value) => handleProductChange(index, "product", value)}
+                        >
+                          <SelectTrigger className={`w-full ${
+                            !product.product ? "border-amber-300" : ""
+                          }`}>
+                            <SelectValue placeholder="Select a product" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {rawMaterials.map((prod) => (
+                              <SelectItem key={prod.id} value={prod.id}>
+                                {prod.product_name} {prod.packaging_weight ? `(${prod.packaging_weight}g)` : ""}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-        <div className="flex justify-end mt-6">
-          <button 
-            type="button" 
-            onClick={() => navigate("/products")}
-            className="px-6 py-2 mr-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-          >
-            Cancel
-          </button>
-          <button 
-            type="submit" 
-            disabled={isSubmitting || formData.products_used.length === 0}
-            className={`px-6 py-2 rounded-md text-white font-medium ${
-              isSubmitting || formData.products_used.length === 0
-                ? "bg-gray-400 cursor-not-allowed" 
-                : "bg-green-600 hover:bg-green-700 transition-colors"
-            }`}
-          >
-            {isSubmitting ? "Processing..." : "Complete Packaging"}
-          </button>
-        </div>
-      </form>
+                      <div>
+                        <Label className="text-[#101023] font-medium">Quantity</Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          step="1"
+                          value={product.quantity}
+                          onChange={(e) => handleProductChange(index, "quantity", Math.max(1, parseInt(e.target.value || 1)))}
+                          className="w-full text-center"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center mt-4">
+                      <div className="text-sm">
+                        {product.product && rawMaterials.find(p => p.id == product.product)?.packaging_weight && (
+                          <span className="text-gray-600">
+                            Total weight: {(product.quantity * rawMaterials.find(p => p.id == product.product)?.packaging_weight).toFixed(2)}g
+                          </span>
+                        )}
+                      </div>
+                      
+                      <Button 
+                        type="button" 
+                        onClick={() => handleRemoveProduct(index)}
+                        variant="outline"
+                        className="border-red-500 text-red-700 hover:bg-red-500 hover:text-white"
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <Button 
+                  type="button" 
+                  onClick={() => navigate("/products")}
+                  variant="outline"
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting || formData.products_used.length === 0}
+                  className={`${
+                    isSubmitting || formData.products_used.length === 0
+                      ? "bg-gray-400 cursor-not-allowed" 
+                      : "bg-[#423e7f] hover:bg-[#201b50]"
+                  } text-white`}
+                >
+                  {isSubmitting ? "Processing..." : "Complete Packaging"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

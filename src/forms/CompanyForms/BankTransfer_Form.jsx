@@ -7,6 +7,12 @@ import PropTypes from 'prop-types';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getImagePreviewSrc } from "/src/utils/imageUtil";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Textarea } from "../../additionalOriginuiComponents/ui/textarea";
 
 const BankTransferForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -87,19 +93,19 @@ const BankTransferForm = ({ mode = "add" }) => {
     }
   }, [formData.company])
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "image") {
-      setFormData((prev) => ({
-        ...prev,
-        image: files[0] || null, // Store the file object
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    setFormData((prev) => ({
+      ...prev,
+      image: files[0] || null, // Store the file object
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -145,133 +151,145 @@ const BankTransferForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Bank Transfer" : "Edit Bank Transfer"}</h2>
-      <form onSubmit={handleSubmit} className="company-form" encType="multipart/form-data">
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Bank Transfer" : "Edit Bank Transfer"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
 
-      {user && user.is_superuser && (
-        <div className="form-group">
-          <label>Company:</label>
-          <select
-            name="company"
-            value={formData.company}
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="" disabled>
-              Select a Company
-            </option>
-            {companies.map((company) => (
-              <option key={company.id} value={company.id}>
-                {company.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <Select value={formData.company} onValueChange={(value) => handleChange("company", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                          {company.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-      {user && !user.branch && (
-        <div className="form-group">
-          <label>Branch:</label>
-          <select
-            name="branch"
-            value={formData.branch}
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="" disabled>
-              Select a Branch
-            </option>
-            {branches.map((branch) => (
-              <option key={branch.id} value={branch.id}>
-                {branch.location}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-        <div className="form-group">
-          <label>Amount:</label>
-          <input
-            type="number"
-            name="amount"
-            min={0}
-            value={formData.amount}
-            onChange={handleChange}
-            placeholder="69000"
-            className="form-input"
-          />
-        </div>
+              {user && !user.branch && (
+                <div className="space-y-2">
+                  <Label htmlFor="branch" className="text-[#101023] font-medium">Branch</Label>
+                  <Select value={formData.branch} onValueChange={(value) => handleChange("branch", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {branches.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>
+                          {branch.location}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="amount" className="text-[#101023] font-medium">Amount</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  min={0}
+                  value={formData.amount}
+                  onChange={(e) => handleChange("amount", e.target.value)}
+                  placeholder="69000"
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Source:</label>
-          <select
-            name="transfer_source"
-            value={formData.transfer_source}
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="BANK">Bank</option>
-            <option value="CASH">Cash</option>
-          </select>
-        </div>
-        {user && !user.branch &&(
+              <div className="space-y-2">
+                <Label htmlFor="transfer_source" className="text-[#101023] font-medium">Source</Label>
+                <Select value={formData.transfer_source} onValueChange={(value) => handleChange("transfer_source", value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="BANK">Bank</SelectItem>
+                    <SelectItem value="CASH">Cash</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {user && !user.branch &&(
+                <div className="space-y-2">
+                  <Label htmlFor="bank" className="text-[#101023] font-medium">Bank</Label>
+                  <Select value={formData.bank} onValueChange={(value) => handleChange("bank", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Bank" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {banks.map((bank) => (
+                        <SelectItem key={bank.id} value={bank.id}>
+                          {bank.branch.location}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-          <div className="form-group">
-          <label>Bank:</label>
-          <select
-            name="bank"
-            value={formData.bank}
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="" disabled>
-              Select a Bank
-            </option>
-            {banks.map((bank) => (
-              <option key={bank.id} value={bank.id}>
-                {bank.branch.location}
-              </option>
-            ))}
-          </select>
-        </div>
-          )}
+              <div className="space-y-2">
+                <Label htmlFor="note" className="text-[#101023] font-medium">Note</Label>
+                <Textarea
+                  id="note"
+                  value={formData.note}
+                  onChange={(e) => handleChange("note", e.target.value)}
+                  placeholder="Why are you transferring this amount?"
+                  required
+                  className="w-full"
+                  rows="3"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Note:</label>
-          <textarea // Changed from input to textarea for better UX
-            name="note"
-            value={formData.note}
-            onChange={handleChange}
-            placeholder="Why are you transferring this amount?"
-            required
-            className="form-input"
-            rows="3"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="image" className="text-[#101023] font-medium">Image</Label>
+                <Input
+                  id="image"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  className="w-full"
+                  required
+                />
 
-        <div className="form-group">
-          <label>Image:</label>
-          <input
-            type="file"
-            name="image"
-            onChange={handleChange}
-            accept="image/*"
-            className="form-input"
-            required
-          />
+                {formData.image &&
+                  // Display the image preview if an image is selected
+                  <img src={getImagePreviewSrc(formData.image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
+                }
+              </div>
 
-          
-          {formData.image &&
-            // Display the image preview if an image is selected
-            <img src={getImagePreviewSrc(formData.image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-          }
-        </div>
-
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Bank Transfer" : "Update Bank Transfer"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/bank-transfers')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Bank Transfer" : "Update Bank Transfer"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

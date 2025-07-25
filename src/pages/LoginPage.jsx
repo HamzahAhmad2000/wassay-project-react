@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { loginUser, verifyToken } from "/src/APIs/TokenAPIs";
 import { toast } from "react-toastify";
 import { User, Lock, LoaderCircle, Eye, EyeOff, AlertCircle } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { Button } from "../../components/ui/button";
-import { Alert, AlertDescription } from "../../../components/ui/alert";
-import { Label } from "../../../components/ui/label";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../additionalOriginuiComponents/ui/card";
+import { Input } from "../additionalOriginuiComponents/ui/input";
+import { Button } from "../additionalOriginuiComponents/ui/button";
+import { Alert, AlertDescription } from "../additionalOriginuiComponents/ui/alert";
+import { Label } from "../additionalOriginuiComponents/ui/label";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");

@@ -18,11 +18,11 @@ const WeekendVsWeekdayChart = () => {
         getData()
   }, []);
   
-  const COLORS = ["#4CAF50", "#FF5733"]; // Green for weekdays, Red for weekends
+  const COLORS = ["var(--color-tertiary-600)", "var(--color-tertiary-500)"]; // Using Origin UI tertiary colors
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+    <div className="p-6 origin-ui-background rounded-lg shadow-md max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold text-center origin-ui-text mb-4" style={{ color: 'var(--color-tertiary-700)' }}>
         Weekend vs. Weekday Sales Report
       </h2>
 
@@ -35,7 +35,7 @@ const WeekendVsWeekdayChart = () => {
                 <Cell key={`cell-${index}`} fill={COLORS[index]} />
               ))}
             </Pie>
-            <Tooltip contentStyle={{ backgroundColor: "white", borderRadius: "5px" }} />
+            <Tooltip contentStyle={{ backgroundColor: "var(--color-primary-200)", borderRadius: "5px", color: "var(--color-secondary-900)" }} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>

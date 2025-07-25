@@ -7,6 +7,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 
+// Import Origin UI components
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+
 const ShiftForm = ({ mode = "add" }) => {
   const { state } = useLocation();
   const existingData = state?.shift || {};
@@ -109,58 +116,80 @@ const ShiftForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Shift" : "Edit Shift"}</h2>
-      <form className="company-form" onSubmit={handleSubmit}>
-        {/* Auto Selected form the creator */}
-        {user && !user.company && (
-          <div className="form-group">
-            <label>Company:</label>
-            <select
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              required
-              className="form-input"
+    <div className="min-h-screen bg-[var(--color-primary-200)] p-6">
+      <Card className="max-w-2xl mx-auto bg-[var(--color-primary-200)] border-[var(--color-primary-100)] shadow-lg">
+        <CardHeader className="text-center pb-6">
+          <CardTitle className="text-3xl font-bold text-[var(--color-secondary-900)]">
+            {mode === "add" ? "Add Shift" : "Edit Shift"}
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          {error && <p className="text-red-600 bg-red-50 p-3 rounded-md border border-red-200">{error}</p>}
+          {success && <p className="text-green-600 bg-green-50 p-3 rounded-md border border-green-200">{success}</p>}
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Auto Selected form the creator */}
+            {user && !user.company && (
+              <div className="space-y-2">
+                <Label htmlFor="company" className="text-[var(--color-secondary-900)] font-medium">
+                  Company
+                </Label>
+                <Select
+                  value={company}
+                  onValueChange={(value) => setCompany(value)}
+                >
+                  <SelectTrigger className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]">
+                    <SelectValue placeholder="Select a Company" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)]">
+                    {companyOptions.map((option) => (
+                      <SelectItem key={option.id} value={option.id.toString()}>
+                        {option.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="timeIn" className="text-[var(--color-secondary-900)] font-medium">
+                Time In
+              </Label>
+              <Input
+                id="timeIn"
+                type="time"
+                value={timeIn}
+                onChange={(e) => setTimeIn(e.target.value)}
+                className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="timeOut" className="text-[var(--color-secondary-900)] font-medium">
+                Time Out
+              </Label>
+              <Input
+                id="timeOut"
+                type="time"
+                value={timeOut}
+                onChange={(e) => setTimeOut(e.target.value)}
+                className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]"
+              />
+            </div>
+
+            <div className="flex justify-center pt-6">
+              <Button 
+                type="submit" 
+                className="bg-[var(--color-tertiary-600)] text-white hover:bg-[var(--color-tertiary-500)] focus:ring-2 focus:ring-[var(--color-tertiary-500)] focus:ring-offset-2 px-8 py-3 text-lg font-medium"
               >
-              <option value="" disabled>
-                Select a Company
-              </option>
-              {companyOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          )}
-
-        <div className="form-group">
-          <label>Time In:</label>
-          <input
-            type="time"
-            value={timeIn}
-            onChange={(e) => setTimeIn(e.target.value)}
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Time Out:</label>
-          <input
-            type="time"
-            value={timeOut}
-            onChange={(e) => setTimeOut(e.target.value)}
-            className="form-input"
-          />
-        </div>
-
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
-
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Shift" : "Update Shift"}
-        </button>
-      </form>
+                {mode === "add" ? "Add Shift" : "Update Shift"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

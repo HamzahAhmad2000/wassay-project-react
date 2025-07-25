@@ -108,7 +108,19 @@ const BankPage = () => {
   if (error) return <div className="text-red-500 text-center mt-4">{error}</div>;
 
   return (
-    <div className="bank-page">
+    <div className="p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-[#201b50] mb-2">Bank Details</h1>
+      </div>
+      <SearchFilter
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        buttonText={"Add Bank"}
+        onButtonClick={() => {
+          navigate(`/add-bank`);
+        }}
+      />
+      <ReusableTable headers={bankHeaders} data={bankData} />
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -120,16 +132,6 @@ const BankPage = () => {
         draggable
         pauseOnHover
       />
-      <h1 className="page-title">Bank Details</h1>
-      <SearchFilter
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        buttonText={"Add Bank"}
-        onButtonClick={() => {
-          navigate(`/add-bank`);
-        }}
-      />
-      <ReusableTable headers={bankHeaders} data={bankData} />
     </div>
   );
 };

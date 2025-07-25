@@ -6,6 +6,11 @@ import PropTypes from 'prop-types';
 import { getBranches, getCompanies } from "/src/APIs/CompanyAPIs";
 import { getCategories } from "/src/APIs/ProductAPIs";
 import { toast } from "react-toastify";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const DiscountForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -104,102 +109,125 @@ const DiscountForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Discount" : "Edit Discount"}</h2>
-      <form className="giftcard-form" onSubmit={handleSubmit}>
-        
-        {user && user.is_superuser && (
-          <div className="form-group">
-            <label htmlFor="company">Company</label>
-            <select
-              id="company"
-              value={formData.company}
-              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-              required
-            >
-              <option value="">Select Company</option>
-              {companies.map((company) => (
-                <option key={company.id} value={company.id}>{company.name}</option>
-              ))}
-            </select>
-          </div>
-        )}
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Discount" : "Edit Discount"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <Select value={formData.company} onValueChange={(value) => setFormData({ ...formData, company: value })}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>{company.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-        {user && !user.branch && (
-          <div className="form-group">
-            <label htmlFor="branch">Branch</label>
-            <select
-              id="branch"
-              value={formData.branch}
-              onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-              required
-            >
-              <option value="">Select Branch</option>
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>{branch.name}</option>
-              ))}
-            </select>
-          </div>
-        )}
+              {user && !user.branch && (
+                <div className="space-y-2">
+                  <Label htmlFor="branch" className="text-[#101023] font-medium">Branch</Label>
+                  <Select value={formData.branch} onValueChange={(value) => setFormData({ ...formData, branch: value })}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {branches.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>{branch.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-        <div className="form-group">
-          <label htmlFor="category">Category</label>
-          <select
-            id="category"
-            value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            required
-            >
-            <option value="">Select Category</option>
-            {categoryOptions.length > 0 && categoryOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.category_name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="start_date">Start Date</label>
-          <input
-            type="date"
-            id="start_date"
-            value={formData.start_date}
-            onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-            required
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-[#101023] font-medium">Category</Label>
+                <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categoryOptions.length > 0 && categoryOptions.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.category_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        
-        <div className="form-group">
-          <label htmlFor="start_date">End Date</label>
-          <input
-            type="date"
-            id="start_date"
-            value={formData.end_date}
-            onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="discount_percentage">Discount Percentage</label>
-          <input
-            type="number"
-            id="discount_percentage"
-            value={formData.discount_percentage}
-            onChange={(e) => setFormData({ ...formData, discount_percentage: e.target.value })}
-            required
-            min="0"
-            max="100"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="start_date" className="text-[#101023] font-medium">Start Date</Label>
+                <Input
+                  type="date"
+                  id="start_date"
+                  value={formData.start_date}
+                  onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                  required
+                  className="w-full"
+                />
+              </div>
 
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
+              <div className="space-y-2">
+                <Label htmlFor="end_date" className="text-[#101023] font-medium">End Date</Label>
+                <Input
+                  type="date"
+                  id="end_date"
+                  value={formData.end_date}
+                  onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                  required
+                  className="w-full"
+                />
+              </div>
 
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Discount" : "Update Discount"}
-        </button>
-      </form>
+              <div className="space-y-2">
+                <Label htmlFor="discount_percentage" className="text-[#101023] font-medium">Discount Percentage</Label>
+                <Input
+                  type="number"
+                  id="discount_percentage"
+                  value={formData.discount_percentage}
+                  onChange={(e) => setFormData({ ...formData, discount_percentage: e.target.value })}
+                  required
+                  min="0"
+                  max="100"
+                  className="w-full"
+                />
+              </div>
+
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
+
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/discounts')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Discount" : "Update Discount"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

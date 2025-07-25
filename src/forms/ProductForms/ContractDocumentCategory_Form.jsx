@@ -9,7 +9,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Select from "react-select";
 import { postContractDocumentCategory } from "/src/APIs/ProductAPIs";
-
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
 
 const ContractDocumentCategoryForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -108,91 +111,117 @@ const ContractDocumentCategoryForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Contract Document" : "Edit Contract Document"}</h2>
-      <form onSubmit={handleSubmit} className="company-form">
-        {user && user.is_superuser && (
-          <>
-            <div className="form-group">
-              <label>Company:</label>
-              <Select
-                value={companies
-                  .map((company) => ({
-                    value: company.id,
-                    label: company.name,
-                  }))
-                  .find((option) => option.value === formData.company) || null
-                }
-                onChange={(selectedOption) => {
-                  handleChange({
-                    target: {
-                      name: "company",
-                      value: selectedOption ? selectedOption.value : null, // Just the ID
-                    },
-                  });
-                }}
-                name="company"
-                required
-                className="form-input"
-                options={companies.map((company) => ({
-                  value: company.id,
-                  label: company.name,
-                }))}
-                placeholder="Select Company"
-              />
-            </div>
-          </>)
-        }
-        {user && (
-          <>
-            <div className="form-group">
-              <label>Branch:</label>
-              <Select
-                value={branches
-                  .map((branch) => ({
-                    value: branch.id,
-                    label: branch.location,
-                  }))
-                  .find((option) => option.value === formData.branch) || null
-                }
-                onChange={(selectedOption) => {
-                  handleChange({
-                    target: {
-                      name: "branch",
-                      value: selectedOption ? selectedOption.value : null, // Just the ID
-                    },
-                  });
-                }}
-                name="branch"
-                required
-                className="form-input"
-                options={branches.map((branch) => ({
-                  value: branch.id,
-                  label: branch.location,
-                }))}
-                placeholder="Select Branch"
-              />
-            </div>
-          </>)
-        }
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Contract Document" : "Edit Contract Document"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">
+                    Company:
+                  </Label>
+                  <Select
+                    value={companies
+                      .map((company) => ({
+                        value: company.id,
+                        label: company.name,
+                      }))
+                      .find((option) => option.value === formData.company) || null
+                    }
+                    onChange={(selectedOption) => {
+                      handleChange({
+                        target: {
+                          name: "company",
+                          value: selectedOption ? selectedOption.value : null,
+                        },
+                      });
+                    }}
+                    name="company"
+                    required
+                    className="w-full"
+                    options={companies.map((company) => ({
+                      value: company.id,
+                      label: company.name,
+                    }))}
+                    placeholder="Select Company"
+                  />
+                </div>
+              )}
+              {user && (
+                <div className="space-y-2">
+                  <Label htmlFor="branch" className="text-[#101023] font-medium">
+                    Branch:
+                  </Label>
+                  <Select
+                    value={branches
+                      .map((branch) => ({
+                        value: branch.id,
+                        label: branch.location,
+                      }))
+                      .find((option) => option.value === formData.branch) || null
+                    }
+                    onChange={(selectedOption) => {
+                      handleChange({
+                        target: {
+                          name: "branch",
+                          value: selectedOption ? selectedOption.value : null,
+                        },
+                      });
+                    }}
+                    name="branch"
+                    required
+                    className="w-full"
+                    options={branches.map((branch) => ({
+                      value: branch.id,
+                      label: branch.location,
+                    }))}
+                    placeholder="Select Branch"
+                  />
+                </div>
+              )}
 
-        <div className="form-group">
-          <label>name:</label>
-          <input
-            type="text"
-            name="name"
-            min={0}
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Legal"
-            className="form-input"
-          />
-        </div>
-        
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Contract Document" : "Update Contract Document"}
-        </button>
-      </form>
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-[#101023] font-medium">
+                  Name:
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  name="name"
+                  min={0}
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Legal"
+                  className="w-full"
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/contract-document-categories")}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Contract Document" : "Update Contract Document"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

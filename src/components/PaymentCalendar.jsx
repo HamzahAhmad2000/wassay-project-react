@@ -59,16 +59,16 @@ const PaymentCalendar = () => {
     let backgroundColor;
     switch (event.type) {
       case 'invoice':
-        backgroundColor = '#3b82f6'; // Tailwind blue-500
+        backgroundColor = 'var(--color-tertiary-600)'; // Origin UI tertiary-600
         break;
       case 'inventory':
-        backgroundColor = '#ef4444'; // Tailwind red-500
+        backgroundColor = 'var(--color-tertiary-500)'; // Origin UI tertiary-500
         break;
       case 'purchase_order':
-        backgroundColor = '#22c55e'; // Tailwind green-500
+        backgroundColor = 'var(--color-tertiary-400)'; // Origin UI tertiary-400
         break;
       default:
-        backgroundColor = '#9ca3af'; // Tailwind gray-400
+        backgroundColor = 'var(--color-tertiary-700)'; // Origin UI tertiary-700
     }
     return {
       style: {
@@ -87,23 +87,23 @@ const PaymentCalendar = () => {
   // Custom toolbar component
   // eslint-disable-next-line react/prop-types
   const CustomToolbar = ({ label, onNavigate }) => (
-    <div className="flex justify-between items-center p-3 bg-gray-100 border-b border-gray-200">
+    <div className="flex justify-between items-center p-3 origin-ui-background border-b border-border">
       <button
-        className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+        className="px-3 py-1 origin-ui-button text-white rounded-md hover:bg-[var(--color-tertiary-500)] transition-colors"
         onClick={() => onNavigate('PREV')}
       >
         Previous
       </button>
-      <h2 className="text-base font-semibold text-gray-800">{label}</h2>
+      <h2 className="text-base font-semibold origin-ui-text">{label}</h2>
       <div className="space-x-2">
         <button
-          className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          className="px-3 py-1 origin-ui-button text-white rounded-md hover:bg-[var(--color-tertiary-500)] transition-colors"
           onClick={() => onNavigate('NEXT')}
         >
           Next
         </button>
         <button
-          className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          className="px-3 py-1 origin-ui-button text-white rounded-md hover:bg-[var(--color-tertiary-500)] transition-colors"
           onClick={() => onNavigate('TODAY')}
         >
           Today
@@ -115,12 +115,12 @@ const PaymentCalendar = () => {
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6">
       {/* Header */}
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+      <h1 className="text-2xl sm:text-3xl font-bold origin-ui-text mb-4" style={{ color: 'var(--color-tertiary-700)' }}>
         Events Calendar
       </h1>
 
       {/* Calendar */}
-      <div className="bg-white rounded-lg shadow-sm">
+      <div className="origin-ui-background rounded-lg shadow-sm">
         <Calendar
           localizer={localizer}
           events={payments}

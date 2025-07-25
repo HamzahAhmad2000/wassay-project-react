@@ -7,6 +7,11 @@ import PropTypes, { object } from 'prop-types';
 import { toast } from "react-toastify";
 import { getBranches, getCompanies, getWareHouses } from "/src/APIs/CompanyAPIs";
 import { getImagePreviewSrc } from "/src/utils/imageUtil";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const InventoryAdjustment = ({ mode = "add" }) => {
   const user = JSON.parse(localStorage.getItem("OrbisUser"));
@@ -172,143 +177,190 @@ const handleSubmit = async (e) => {
 };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Product" : "Edit Product"}</h2>
-      <form onSubmit={(e) => handleSubmit(e, inventory_adjustment)} className="inventory_adjustment-form">
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Product" : "Edit Product"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={(e) => handleSubmit(e, inventory_adjustment)} className="space-y-6">
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Company</Label>
+                  <Select
+                    value={inventory_adjustment.company}
+                    onValueChange={(value) => setInventoryAdjustment(prev => ({...prev, company: value}))}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                          {company.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-        {user && user.is_superuser && (
-          <div>
-            <label className="block text-sm font-medium">Company</label>
-            <select
-              name="company"
-              value={inventory_adjustment.company}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              required
-              >
-              <option value="">Select Company</option>
-              {companies.map((company) => (
-                <option key={company.id} value={company.id}>
-                  {company.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+              {user && !user.branch && (
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Branch</Label>
+                  <Select
+                    value={inventory_adjustment.branch}
+                    onValueChange={(value) => setInventoryAdjustment(prev => ({...prev, branch: value}))}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {branches.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>
+                          {branch.address}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              
+              {user && !user.warehouse && (
+                <div className="space-y-2">
+                  <Label className="text-[#101023] font-medium">Warehouse</Label>
+                  <Select
+                    value={inventory_adjustment.warehouse}
+                    onValueChange={(value) => setInventoryAdjustment(prev => ({...prev, warehouse: value}))}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Warehouse" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {warehouses.map((warehouse) => (
+                        <SelectItem key={warehouse.id} value={warehouse.id}>
+                          {warehouse.address}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-        {user && !user.branch && (
-            <div>
-              <label className="block text-sm font-medium">Branch</label>
-              <select
-                name="branch"
-                value={inventory_adjustment.branch}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-                required
-              >
-                <option value="">Select Branch</option>
-                {branches.map((branch) => (
-                  <option key={branch.id} value={branch.id}>
-                    {branch.address}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-          {user && !user.warehouse && (
-            <div>
-              <label className="block text-sm font-medium">Warehouse</label>
-              <select
-                name="warehouse"
-                value={inventory_adjustment.warehouse}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-              >
-                <option value="">Select Warehouse</option>
-                {warehouses.map((warehouse) => (
-                  <option key={warehouse.id} value={warehouse.id}>
-                    {warehouse.address}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+              <div className="space-y-2">
+                <Label htmlFor="product" className="text-[#101023] font-medium">Product:</Label>
+                <Select
+                  value={inventory_adjustment.product || ""}
+                  onValueChange={(value) => setInventoryAdjustment(prev => ({...prev, product: value}))}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {products.map((product) => (
+                      <SelectItem key={product.id} value={product.id}>
+                        {product.product_name + " " + product.packaging_weight +  " " + product.unit + " - " + product.id}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="quantity_adjusted" className="text-[#101023] font-medium">Adjusted Quantity:</Label>
+                <Input 
+                  type="number" 
+                  name="quantity_adjusted" 
+                  min={0} 
+                  value={inventory_adjustment.quantity_adjusted} 
+                  onChange={handleChange} 
+                  className="w-full" 
+                />
+              </div>
 
-          
-        <div className="form-group">
-          <label>Product:</label>
-          <select
-            value={inventory_adjustment.product || ""}
-            name='product'
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="">Select a product</option>
-            {products.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.product_name + " " + product.packaging_weight +  " " + product.unit + " - " + product.id}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label>Adjusted Quantity:</label>
-          <input 
-            type="number" 
-            name="quantity_adjusted" 
-            min={0} 
-            value={inventory_adjustment.quantity_adjusted} 
-            onChange={handleChange} 
-            required 
-            className="form-input" 
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="adjustment_type" className="text-[#101023] font-medium">Adjustment Type:</Label>
+                <Select
+                  value={inventory_adjustment.adjustment_type}
+                  onValueChange={(value) => setInventoryAdjustment(prev => ({...prev, adjustment_type: value}))}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Adjustment Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Theft">Theft</SelectItem>
+                    <SelectItem value="Spoilage">Spoilage</SelectItem>
+                    <SelectItem value="Damage">Damage</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-        
-        <div className="form-group">
-          <label>Adjustment Type:</label>
-          <select name="adjustment_type" value={inventory_adjustment.adjustment_type} onChange={handleChange} className="form-input">
-            <option value="">Select Adjustment Type</option>
-            <option value="Theft">Theft</option>
-            <option value="Spoilage">Spoilage</option>
-            <option value="Damage">Damage</option>
-          </select>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="reason" className="text-[#101023] font-medium">Reason:</Label>
+                <textarea 
+                  type="text" 
+                  name="reason" 
+                  value={inventory_adjustment.reason} 
+                  onChange={handleChange} 
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent" 
+                />
+              </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="comment" className="text-[#101023] font-medium">Comment:</Label>
+                <textarea 
+                  type="text" 
+                  name="comment" 
+                  value={inventory_adjustment.comment} 
+                  onChange={handleChange} 
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent" 
+                />
+              </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="image" className="text-[#101023] font-medium">Image</Label>
+                <Input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  className="w-full"
+                  onChange={handleFileChange}
+                />
+                {inventory_adjustment.image && (
+                  <img 
+                    src={getImagePreviewSrc(inventory_adjustment.image)} 
+                    alt="Preview" 
+                    className="mt-2 w-32 h-32 object-cover rounded-md" 
+                  />
+                )}
+              </div>
 
-        <div className="form-group">
-          <label>Reason:</label>
-          <textarea type="text" name="reason" value={inventory_adjustment.reason} onChange={handleChange} className="form-input" />
-        </div>
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
 
-        <div className="form-group">
-          <label>Comment:</label>
-          <textarea type="text" name="comment" value={inventory_adjustment.comment} onChange={handleChange} className="form-input" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            required
-            className="form-input"
-            onChange={(e) => setInventoryAdjustment({ ...inventory_adjustment, image: e.target.files[0] })}
-          />
-          {inventory_adjustment.image &&
-            // Display the image preview if an image is selected
-            <img src={getImagePreviewSrc(inventory_adjustment.image)} alt="Preview" className="mt-2 w-32 h-32 object-cover rounded-md" />
-          }
-        </div>
-
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
-
-        <button type="submit" className="submit-button">{mode === "add" ? "Add Inventory Adjustment" : "Update Inventory Adjustment"}</button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/inventory-adjustment")}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Inventory Adjustment" : "Update Inventory Adjustment"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -3,6 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { getUsers } from "/src/APIs/UserAPIs";
 import { postNotifications } from "/src/APIs/NotificationAPIs";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const AlertForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -60,55 +65,87 @@ const AlertForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Alert" : "Edit Alert"}</h2>
-      <form className="category-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Title:</label>
-          <input
-            type="text"
-            name="title"
-            value={alert.title}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Alert" : "Edit Alert"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-[#101023] font-medium">
+                  Title:
+                </Label>
+                <Input
+                  id="title"
+                  type="text"
+                  name="title"
+                  value={alert.title}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea
-            name="description"
-            value={alert.description}
-            onChange={handleChange}
-            className="form-input"
-          ></textarea>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-[#101023] font-medium">
+                  Description:
+                </Label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={alert.description}
+                  onChange={handleChange}
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>To:</label>
-          <select
-            name="to"
-            value={alert.to}
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="">Select Responsible Person</option>
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.role || ""} - {user.user_name}
-              </option>
-            ))}
-          </select>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="to" className="text-[#101023] font-medium">
+                  To:
+                </Label>
+                <Select
+                  value={alert.to}
+                  onValueChange={(value) => setAlert(prev => ({...prev, to: value}))}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Responsible Person" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.role || ""} - {user.user_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
 
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
-
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Alert" : "Update Alert"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/alerts")}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Alert" : "Update Alert"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

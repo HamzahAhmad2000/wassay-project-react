@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReusableTable from "../../components/ReusableTable"; // Import ReusableTable
 import { Pencil, Trash2 } from "lucide-react"; // Import Lucide icons
+import { Button } from "../../additionalOriginuiComponents/ui/button";
 
 const LPRPage = () => {
   const navigate = useNavigate();
@@ -115,26 +116,42 @@ const LPRPage = () => {
     yearly_purchase_milestone_points: LPR.yearly_purchase_milestone_points || "N/A",
     actions: (
       <div className="flex space-x-2">
-        <button
+        <Button
           onClick={() => handleUpdate(LPR.id)}
-          className="inline-flex items-center px-2 py-1 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white focus:outline-none text-sm"
+          variant="outline"
+          size="sm"
+          className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
         >
           <Pencil className="h-4 w-4 mr-1" />
           Update
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => handleDelete(LPR.id)}
-          className="inline-flex items-center px-2 py-1 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white focus:outline-none text-sm"
+          variant="outline"
+          size="sm"
+          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
         >
           <Trash2 className="h-4 w-4 mr-1" />
           Delete
-        </button>
+        </Button>
       </div>
     ),
   }));
 
   return (
-    <div className="company-page">
+    <div className="p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-[#201b50] mb-2">Royalty Point Rules</h1>
+      </div>
+      <SearchFilter
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        buttonText={"Add Royalty Point Rules"}
+        onButtonClick={() => {
+          navigate(`/add-LPR`);
+        }}
+      />
+      <ReusableTable headers={LPRHeaders} data={LPRData} />
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -146,16 +163,6 @@ const LPRPage = () => {
         draggable
         pauseOnHover
       />
-      <h1 className="page-title">Royalty Point Rules</h1>
-      <SearchFilter
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        buttonText={"Add Royalty Point Rules"}
-        onButtonClick={() => {
-          navigate(`/add-LPR`);
-        }}
-      />
-      <ReusableTable headers={LPRHeaders} data={LPRData} />
     </div>
   );
 };

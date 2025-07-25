@@ -16,16 +16,16 @@ const NewProductLaunchSalesReport = () => {
 }, []);
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 origin-ui-background min-h-screen">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-green-700 mb-6 text-center">
+        <h1 className="text-3xl font-extrabold mb-6 text-center origin-ui-text" style={{ color: 'var(--color-tertiary-600)' }}>
           🚀 New Product Launch Sales Report
         </h1>
 
         {/* Table */}
         <div className="overflow-x-auto mb-8 shadow-lg rounded-lg">
-          <table className="w-full bg-white border border-gray-300 rounded-lg">
-            <thead className="bg-green-600 text-white">
+          <table className="w-full origin-ui-background border border-border rounded-lg">
+            <thead className="origin-ui-table-heading" style={{ backgroundColor: 'var(--color-tertiary-600)', color: 'white' }}>
               <tr>
                 <th className="py-4 px-6 text-left">Product</th>
                 <th className="py-4 px-6 text-center">Total Sales</th>
@@ -37,13 +37,13 @@ const NewProductLaunchSalesReport = () => {
                 salesData.map((item, index) => (
                   <tr
                     key={index}
-                    className="border-b hover:bg-green-100 transition duration-200"
+                    className="border-b hover:bg-muted transition duration-200"
                   >
-                    <td className="py-4 px-6">{item.name}</td>
-                    <td className="py-4 px-6 text-center font-semibold text-green-700">
+                    <td className="py-4 px-6 origin-ui-text">{item.name}</td>
+                    <td className="py-4 px-6 text-center font-semibold origin-ui-text" style={{ color: 'var(--color-tertiary-600)' }}>
   {item.total_sales.toLocaleString()} {/* Adds thousand separators */}
 </td>
-<td className="py-4 px-6 text-center font-semibold text-green-700">
+<td className="py-4 px-6 text-center font-semibold origin-ui-text" style={{ color: 'var(--color-tertiary-600)' }}>
   ${item?.total_revenue ? item.total_revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}
 </td>
 
@@ -51,7 +51,7 @@ const NewProductLaunchSalesReport = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="text-center py-6 text-gray-500">
+                  <td colSpan="4" className="text-center py-6 text-muted-foreground">
                     No data available.
                   </td>
                 </tr>
@@ -61,16 +61,16 @@ const NewProductLaunchSalesReport = () => {
         </div>
 
         {/* Line Chart */}
-        <h2 className="text-xl font-semibold text-green-700 mb-4 text-center">
+        <h2 className="text-xl font-semibold mb-4 text-center origin-ui-text" style={{ color: 'var(--color-tertiary-600)' }}>
           Sales Performance Over Time
         </h2>
-        <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="origin-ui-background p-6 rounded-lg shadow-lg">
           <ResponsiveContainer width="100%" height={350}>
             <LineChart data={salesData} margin={{ left: 20, right: 20 }}>
               <XAxis dataKey="launch_date" />
               <YAxis />
               <Tooltip />
-              <Line type="monotone" dataKey="total_sales" stroke="#16A34A" strokeWidth={3} />
+              <Line type="monotone" dataKey="total_sales" stroke="var(--color-tertiary-600)" strokeWidth={3} />
             </LineChart>
           </ResponsiveContainer>
         </div>

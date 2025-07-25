@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getAisle, getBranches, getCompanies, getFloors, postSide } from '/src/APIs/CompanyAPIs';
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Checkbox } from "../../additionalOriginuiComponents/ui/checkbox";
 
 const SideForm = () => {
   const { state } = useLocation()
@@ -100,9 +105,8 @@ const SideForm = () => {
     }
   }, [formData.floor])
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
   };
   
   const handleSideChange = (side) => {
@@ -150,157 +154,155 @@ const SideForm = () => {
     }
   };
 
-
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{existingData.id ? 'Update Side' : 'Create Side'}</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {user && user.is_superuser && (
-          <div>
-            <label className="block text-sm font-medium">Company</label>
-            <select
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              required
-            >
-              <option value="">Select Company</option>
-              {companies.map((company) => (
-                <option key={company.id} value={company.id}>
-                  {company.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        {user && !user.branch && (
-          <div>
-            <label className="block text-sm font-medium">Branch</label>
-            <select
-              name="branch"
-              value={formData.branch}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              required
-              >
-              <option value="">Select Branch</option>
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.address}
-                </option>
-              ))}
-            </select>
-          </div>
-          )}
-        <div>
-          <label className="block text-sm font-medium">Floor</label>
-          <select
-            name="floor"
-            value={formData.floor}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          >
-            <option value="">Select Floor</option>
-            {floors.map((floor) => (
-              <option key={floor.id} value={floor.id}>
-                {floor.name || `Floor ${floor.number}`}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Aisle</label>
-          <select
-            name="aisle"
-            value={formData.aisle}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          >
-            <option value="">Select Aisle</option>
-            {aisles.map((aisle) => (
-              <option key={aisle.id} value={aisle.id}>
-                {aisle.name || `Aisle ${aisle.number}`}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="flex flex-col items-center justify-center pt-20">
-          {/* Container with rectangle */}
-          <div className="relative w-72 h-48 border-4 border-black">
-            {/* Front */}
-            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={sideOptions.Front || formData.side == 'Front'}
-                  onChange={() => handleSideChange('Front')}
-                  className="accent-blue-500"
-                />
-                <span>Front</span>
-              </label>
-            </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {existingData.id ? 'Update Side' : 'Create Side'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <Select value={formData.company} onValueChange={(value) => handleChange("company", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                          {company.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              {user && !user.branch && (
+                <div className="space-y-2">
+                  <Label htmlFor="branch" className="text-[#101023] font-medium">Branch</Label>
+                  <Select value={formData.branch} onValueChange={(value) => handleChange("branch", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {branches.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>
+                          {branch.address}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="floor" className="text-[#101023] font-medium">Floor</Label>
+                <Select value={formData.floor} onValueChange={(value) => handleChange("floor", value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Floor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {floors.map((floor) => (
+                      <SelectItem key={floor.id} value={floor.id}>
+                        {floor.name || `Floor ${floor.number}`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="aisle" className="text-[#101023] font-medium">Aisle</Label>
+                <Select value={formData.aisle} onValueChange={(value) => handleChange("aisle", value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Aisle" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {aisles.map((aisle) => (
+                      <SelectItem key={aisle.id} value={aisle.id}>
+                        {aisle.name || `Aisle ${aisle.number}`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center pt-20">
+                {/* Container with rectangle */}
+                <div className="relative w-72 h-48 border-4 border-black">
+                  {/* Front */}
+                  <div className="absolute -top-12 left-1/2 transform -translate-x-1/2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={sideOptions.Front || formData.side == 'Front'}
+                        onCheckedChange={() => handleSideChange('Front')}
+                        className="accent-blue-500"
+                      />
+                      <span className="text-[#101023]">Front</span>
+                    </div>
+                  </div>
 
-            {/* Back */}
-            <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={sideOptions.Back || formData.side == 'Bank'}
-                  onChange={() => handleSideChange('Back')}
-                  className="accent-blue-500"
-                />
-                <span>Back</span>
-              </label>
-            </div>
+                  {/* Back */}
+                  <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={sideOptions.Back || formData.side == 'Bank'}
+                        onCheckedChange={() => handleSideChange('Back')}
+                        className="accent-blue-500"
+                      />
+                      <span className="text-[#101023]">Back</span>
+                    </div>
+                  </div>
 
-            {/* Left */}
-            <div className="absolute left-[-80px] top-1/2 transform -translate-y-1/2">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={sideOptions.Left || formData.side == 'Left'}
-                  onChange={() => handleSideChange('Left')}
-                  className="accent-blue-500"
-                />
-                <span>Left</span>
-              </label>
-            </div>
+                  {/* Left */}
+                  <div className="absolute left-[-80px] top-1/2 transform -translate-y-1/2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={sideOptions.Left || formData.side == 'Left'}
+                        onCheckedChange={() => handleSideChange('Left')}
+                        className="accent-blue-500"
+                      />
+                      <span className="text-[#101023]">Left</span>
+                    </div>
+                  </div>
 
-            {/* Right */}
-            <div className="absolute right-[-80px] top-1/2 transform -translate-y-1/2">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={sideOptions.Right || formData.side == 'Right'}
-                  onChange={() => handleSideChange('Right')}
-                  className="accent-blue-500"
-                />
-                <span>Right</span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div className="flex space-x-2">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            disabled={loading}
-          >
-            {loading ? 'Saving...' : existingData.id ? 'Update' : 'Create'}
-          </button>
-          <button
-            type="button"
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-            onClick={() => navigate('/sides')}
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+                  {/* Right */}
+                  <div className="absolute right-[-80px] top-1/2 transform -translate-y-1/2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        checked={sideOptions.Right || formData.side == 'Right'}
+                        onCheckedChange={() => handleSideChange('Right')}
+                        className="accent-blue-500"
+                      />
+                      <span className="text-[#101023]">Right</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/sides')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {loading ? 'Saving...' : existingData.id ? 'Update' : 'Create'}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

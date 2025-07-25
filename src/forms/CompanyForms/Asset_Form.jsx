@@ -6,7 +6,12 @@ import "/src/styles/FormStyles.css";
 import PropTypes from "prop-types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Select from "react-select";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Textarea } from "../../additionalOriginuiComponents/ui/textarea";
 
 const AssetForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -131,217 +136,213 @@ const AssetForm = ({ mode = "add" }) => {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
+  const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: files ? files[0] : value,
+      [field]: value,
     }));
   };
 
-  const handleSelectChange = (name, selectedOption) => {
+  const handleFileChange = (e) => {
+    const files = e.target.files;
     setFormData((prev) => ({
       ...prev,
-      [name]: selectedOption ? selectedOption.value : "",
+      picture: files ? files[0] : null,
     }));
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Asset" : "Edit Asset"}</h2>
-      <form onSubmit={handleSubmit} className="company-form" encType="multipart/form-data">
-        {user?.is_superuser && (
-          <div className="form-group">
-            <label>Company:</label>
-            <Select
-              value={
-                companies
-                  .map((company) => ({
-                    value: company.id,
-                    label: company.name,
-                  }))
-                  .find((option) => option.value === formData.company) || null
-              }
-              onChange={(selectedOption) => handleSelectChange("company", selectedOption)}
-              name="company"
-              className="form-input"
-              options={companies.map((company) => ({
-                value: company.id,
-                label: company.name,
-              }))}
-              placeholder="Select Company"
-            />
-          </div>
-        )}
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Asset" : "Edit Asset"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
+              {user?.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <Select value={formData.company} onValueChange={(value) => handleChange("company", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                          {company.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-        {user && !user?.branch && (
-          <div className="form-group">
-            <label>Branch:</label>
-            <Select
-              value={
-                branches
-                  .map((branch) => ({
-                    value: branch.id,
-                    label: branch.address,
-                  }))
-                  .find((option) => option.value === formData.branch) || null
-              }
-              onChange={(selectedOption) => handleSelectChange("branch", selectedOption)}
-              name="branch"
-              className="form-input"
-              options={branches.map((branch) => ({
-                value: branch.id,
-                label: branch.address,
-              }))}
-              placeholder="Select Branch"
-            />
-          </div>
-        )}
+              {user && !user?.branch && (
+                <div className="space-y-2">
+                  <Label htmlFor="branch" className="text-[#101023] font-medium">Branch</Label>
+                  <Select value={formData.branch} onValueChange={(value) => handleChange("branch", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {branches.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>
+                          {branch.address}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-        {user && !user?.warehouse && (
-          <div className="form-group">
-            <label>Warehouse:</label>
-            <Select
-              value={
-                warehouses
-                  .map((warehouse) => ({
-                    value: warehouse.id,
-                    label: warehouse.address,
-                  }))
-                  .find((option) => option.value === formData.warehouse) || null
-              }
-              onChange={(selectedOption) => handleSelectChange("warehouse", selectedOption)}
-              name="warehouse"
-              className="form-input"
-              options={warehouses.map((warehouse) => ({
-                value: warehouse.id,
-                label: warehouse.address,
-              }))}
-              placeholder="Select Branch"
-            />
-          </div>
-        )}
+              {user && !user?.warehouse && (
+                <div className="space-y-2">
+                  <Label htmlFor="warehouse" className="text-[#101023] font-medium">Warehouse</Label>
+                  <Select value={formData.warehouse} onValueChange={(value) => handleChange("warehouse", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Warehouse" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {warehouses.map((warehouse) => (
+                        <SelectItem key={warehouse.id} value={warehouse.id}>
+                          {warehouse.address}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-        <div className="form-group">
-          <label>Purchase Year:</label>
-          <input
-            type="number"
-            name="purchase_year"
-            min={1900}
-            max={new Date().getFullYear()}
-            value={formData.purchase_year}
-            onChange={handleChange}
-            placeholder="e.g. 2023"
-            className="form-input"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="purchase_year" className="text-[#101023] font-medium">Purchase Year</Label>
+                <Input
+                  id="purchase_year"
+                  type="number"
+                  min={1900}
+                  max={new Date().getFullYear()}
+                  value={formData.purchase_year}
+                  onChange={(e) => handleChange("purchase_year", e.target.value)}
+                  placeholder="e.g. 2023"
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Buying Price:</label>
-          <input
-            type="number"
-            name="buying_price"
-            min={0}
-            value={formData.buying_price}
-            onChange={handleChange}
-            placeholder="0.00"
-            className="form-input"
-            step="0.01"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="buying_price" className="text-[#101023] font-medium">Buying Price</Label>
+                <Input
+                  id="buying_price"
+                  type="number"
+                  min={0}
+                  value={formData.buying_price}
+                  onChange={(e) => handleChange("buying_price", e.target.value)}
+                  placeholder="0.00"
+                  className="w-full"
+                  step="0.01"
+                />
+              </div>
 
-         <div className="form-group">
-            <label>Paid Through:</label>
-            <select
-              name="paid_through"
-              value={formData.paid_through}
-              onChange={handleChange}
-              className="form-select"
-            >
-              <option value="">
-                Select Payment Method (Keep this selected if Purchased in the past)
-              </option>
-              <option value="cash">Cash</option>
-              <option value="bank">Bank Transfer</option>
-            </select>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="paid_through" className="text-[#101023] font-medium">Paid Through</Label>
+                <Select value={formData.paid_through} onValueChange={(value) => handleChange("paid_through", value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Payment Method (Keep this selected if Purchased in the past)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cash">Cash</SelectItem>
+                    <SelectItem value="bank">Bank Transfer</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="form-group">
-          <label>useful Life (years) :</label>
-          <input
-            type="number"
-            min={0}
-            name="useful_life"
-            value={formData.useful_life}
-            onChange={handleChange}
-            placeholder="0.00"
-            className="form-input"
-            step="0.01"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="useful_life" className="text-[#101023] font-medium">Useful Life (years)</Label>
+                <Input
+                  id="useful_life"
+                  type="number"
+                  min={0}
+                  value={formData.useful_life}
+                  onChange={(e) => handleChange("useful_life", e.target.value)}
+                  placeholder="0.00"
+                  className="w-full"
+                  step="0.01"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Type:</label>
-          <select 
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            className="form-select"
-          >
-            <option value="" disabled>
-              Select Type
-            </option>
-            <option value="Motor">Motor</option>
-            <option value="Building">Building</option>
-            <option value="Equipment">Equipment</option>
-            <option value="Furniture">Furniture</option>
-            <option value="vehicle">Vehicle</option>
-            <option value="Machinery">Machinery</option>
-            <option value="Other">Other</option>
-          </select>
+              <div className="space-y-2">
+                <Label htmlFor="type" className="text-[#101023] font-medium">Type</Label>
+                <Select value={formData.type} onValueChange={(value) => handleChange("type", value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Motor">Motor</SelectItem>
+                    <SelectItem value="Building">Building</SelectItem>
+                    <SelectItem value="Equipment">Equipment</SelectItem>
+                    <SelectItem value="Furniture">Furniture</SelectItem>
+                    <SelectItem value="vehicle">Vehicle</SelectItem>
+                    <SelectItem value="Machinery">Machinery</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-[#101023] font-medium">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => handleChange("name", e.target.value)}
+                  placeholder="e.g. Model, Manufacturer, etc."
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="e.g. Model, Manufacturer, etc."
-            className="form-input"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="picture" className="text-[#101023] font-medium">Picture</Label>
+                <Input
+                  id="picture"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="image/jpeg,image/png"
+                  className="w-full"
+                  required
+                />
+              </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-[#101023] font-medium">Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => handleChange("description", e.target.value)}
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Picture:</label>
-          <input
-            type="file"
-            name="picture"
-            onChange={handleChange}
-            accept="image/jpeg,image/png"
-            className="form-input"
-            required
-          />
-        </div>
-
-        
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
-
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Asset" : "Update Asset"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/assets')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Asset" : "Update Asset"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

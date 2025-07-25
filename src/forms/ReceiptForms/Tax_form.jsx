@@ -7,6 +7,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { getCompanies } from "/src/APIs/CompanyAPIs";
 import { toast } from "react-toastify";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const TaxForm = ({ mode = "add" }) => {
   
@@ -153,94 +158,108 @@ const TaxForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-  <h2 className="form-heading">{mode === "add" ? "Add Tax" : "Edit Tax"}</h2>
-  <form className="category-form" onSubmit={handleSubmit}>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Tax" : "Edit Tax"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <Select value={company} onValueChange={setCompany}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-    {user && user.is_superuser && (
-      <div className="form-group">
-        <label>Company:</label>
-        <select
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          required
-          className="form-input"
-          >
-          <option value="" disabled>
-            Select a Company
-          </option>
-          {companies.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.name}
-            </option>
-          ))}
-        </select>
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-[#101023] font-medium">Category</Label>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categoryOptions.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.category_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tax_name" className="text-[#101023] font-medium">Tax Type</Label>
+                <Input
+                  type="text"
+                  id="tax_name"
+                  value={tax_name}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="GST, Income, etc..."
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="viaCard" className="text-[#101023] font-medium">Via Card (%)</Label>
+                <Input
+                  type="number"
+                  id="viaCard"
+                  value={viaCard}
+                  onChange={(e) => setViaCard(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="viaCash" className="text-[#101023] font-medium">Via Cash (%)</Label>
+                <Input
+                  type="number"
+                  id="viaCash"
+                  value={viaCash}
+                  onChange={(e) => setViaCash(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
+
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/taxes')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Tax" : "Update Tax"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-    )}
-
-    <div className="form-group">
-      <label>Category:</label>
-      <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        required
-        className="form-input"
-      >
-        <option value="" disabled>
-          Select a Category
-        </option>
-        {categoryOptions.map((option) => (
-          <option key={option.id} value={option.id}>
-            {option.category_name}
-          </option>
-        ))}
-      </select>
     </div>
-
-
-    <div className="form-group">
-      <label>Tax Type:</label>
-      <input
-        type="text"
-        value={tax_name}
-        onChange={(e) => setLocation(e.target.value)}
-        placeholder="GST, Income, etc..."
-        className="form-input"
-      />
-    </div>
-
-    <div className="form-group">
-      <label>Via Card(%):</label>
-      <input
-        rows="3"
-        type="number"
-        value={viaCard}
-        onChange={(e) => setViaCard(e.target.value)}
-        className="form-input"
-      />
-    </div>
-
-    <div className="form-group">
-      <label>Via Cash(%):</label>
-      <input
-        rows="3"
-        type="number"
-        value={viaCash}
-        onChange={(e) => setViaCash(e.target.value)}
-        className="form-input"
-      />
-    </div>
-
-
-    {error && <p className="error-text">{error}</p>}
-    {success && <p className="success-text">{success}</p>}
-
-    <button type="submit" className="submit-button">
-      {mode === "add" ? "Add Tax" : "Update Tax"}
-    </button>
-  </form>
-</div>
-
   );
 };
 

@@ -5,6 +5,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 
+// Import Origin UI components
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+
 const SalaryForm = ({ mode = "add" }) => {
   const { state } = useLocation();
   const existingData = state?.salary || {};
@@ -176,120 +183,162 @@ const SalaryForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Salary" : "Edit Salary"}</h2>
-      <form className="salary-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Staff ID:</label>
-          <select
-            name="staff"
-            value={formData.staff}
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="">Select Staff</option>
-            {staffOptions.map((staff) => (
-              <option key={staff.id} value={staff.id}>
-                {staff.user_name}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="min-h-screen bg-[var(--color-primary-200)] p-6">
+      <Card className="max-w-3xl mx-auto bg-[var(--color-primary-200)] border-[var(--color-primary-100)] shadow-lg">
+        <CardHeader className="text-center pb-6">
+          <CardTitle className="text-3xl font-bold text-[var(--color-secondary-900)]">
+            {mode === "add" ? "Add Salary" : "Edit Salary"}
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          {error && <p className="text-red-600 bg-red-50 p-3 rounded-md border border-red-200">{error}</p>}
+          {success && <p className="text-green-600 bg-green-50 p-3 rounded-md border border-green-200">{success}</p>}
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="staff" className="text-[var(--color-secondary-900)] font-medium">
+                  Staff ID
+                </Label>
+                <Select
+                  value={formData.staff}
+                  onValueChange={(value) => setFormData({ ...formData, staff: value })}
+                >
+                  <SelectTrigger className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]">
+                    <SelectValue placeholder="Select Staff" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)]">
+                    {staffOptions.map((staff) => (
+                      <SelectItem key={staff.id} value={staff.id.toString()}>
+                        {staff.user_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="form-group">
-          <label>Date:</label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="date" className="text-[var(--color-secondary-900)] font-medium">
+                  Date
+                </Label>
+                <Input
+                  id="date"
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Base Salary:</label>
-          <input
-            type="number"
-            name="baseSalary"
-            value={formData.baseSalary}
-            disabled
-            className="form-input"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="baseSalary" className="text-[var(--color-secondary-900)] font-medium">
+                  Base Salary
+                </Label>
+                <Input
+                  id="baseSalary"
+                  type="number"
+                  name="baseSalary"
+                  value={formData.baseSalary}
+                  disabled
+                  className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] opacity-50"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Salary Amount (Cash):</label>
-          <input
-            type="number"
-            name="salaryAmountCash"
-            value={formData.salaryAmountCash}
-            onChange={handleChange}
-            className="form-input"
-            min="0"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="salaryAmountCash" className="text-[var(--color-secondary-900)] font-medium">
+                  Salary Amount (Cash)
+                </Label>
+                <Input
+                  id="salaryAmountCash"
+                  type="number"
+                  name="salaryAmountCash"
+                  value={formData.salaryAmountCash}
+                  onChange={handleChange}
+                  min="0"
+                  className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Salary Amount (Bank):</label>
-          <input
-            type="number"
-            name="salaryAmountBank"
-            value={formData.salaryAmountBank}
-            onChange={handleChange}
-            className="form-input"
-            min="0"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="salaryAmountBank" className="text-[var(--color-secondary-900)] font-medium">
+                  Salary Amount (Bank)
+                </Label>
+                <Input
+                  id="salaryAmountBank"
+                  type="number"
+                  name="salaryAmountBank"
+                  value={formData.salaryAmountBank}
+                  onChange={handleChange}
+                  min="0"
+                  className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Advance Salary:</label>
-          <select
-            name="advance"
-            value={formData.advance}
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option defaultChecked value={""}> Select Advance Salary</option>
-            {advanceSalaries.length > 0 && advanceSalaries.map((advance) => (
-              <option key={advance.id} value={advance.id}>
-                {advance.total_amount} { advance.date}
-              </option>
-            ))}
-          </select>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="advance" className="text-[var(--color-secondary-900)] font-medium">
+                  Advance Salary
+                </Label>
+                <Select
+                  value={formData.advance}
+                  onValueChange={(value) => setFormData({ ...formData, advance: value })}
+                >
+                  <SelectTrigger className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]">
+                    <SelectValue placeholder="Select Advance Salary" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)]">
+                    {advanceSalaries.length > 0 && advanceSalaries.map((advance) => (
+                      <SelectItem key={advance.id} value={advance.id.toString()}>
+                        {advance.total_amount} { advance.date}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="form-group">
-          <label>Deduction:</label>
-          <input
-            type="number"
-            name="deduction"
-            value={formData.deduction}
-            onChange={handleChange}
-            className="form-input"
-            min="0"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="deduction" className="text-[var(--color-secondary-900)] font-medium">
+                  Deduction
+                </Label>
+                <Input
+                  id="deduction"
+                  type="number"
+                  name="deduction"
+                  value={formData.deduction}
+                  onChange={handleChange}
+                  min="0"
+                  className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Bonus:</label>
-          <input
-            type="number"
-            name="bonus"
-            value={formData.bonus}
-            onChange={handleChange}
-            className="form-input"
-            min="0"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="bonus" className="text-[var(--color-secondary-900)] font-medium">
+                  Bonus
+                </Label>
+                <Input
+                  id="bonus"
+                  type="number"
+                  name="bonus"
+                  value={formData.bonus}
+                  onChange={handleChange}
+                  min="0"
+                  className="bg-[var(--color-primary-50)] border-[var(--color-primary-100)] text-[var(--color-secondary-900)] focus:border-[var(--color-tertiary-500)] focus:ring-[var(--color-tertiary-500)]"
+                />
+              </div>
+            </div>
 
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
-
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Salary" : "Update Salary"}
-        </button>
-      </form>
+            <div className="flex justify-center pt-6">
+              <Button 
+                type="submit" 
+                className="bg-[var(--color-tertiary-600)] text-white hover:bg-[var(--color-tertiary-500)] focus:ring-2 focus:ring-[var(--color-tertiary-500)] focus:ring-offset-2 px-8 py-3 text-lg font-medium"
+              >
+                {mode === "add" ? "Add Salary" : "Update Salary"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

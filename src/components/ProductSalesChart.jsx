@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { AlertCircle } from "lucide-react";
 import Loader from "./Loader";
 import ChartCard from "./ChartCard";
 import { useToast } from "@/hooks/use-toast";

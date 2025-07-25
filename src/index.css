@@ -39,6 +39,10 @@
   @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md px-4 py-2 font-medium transition-colors;
 }
 
+.origin-button-disabled {
+  @apply bg-accent text-accent-foreground cursor-not-allowed opacity-50 rounded-md px-4 py-2 font-medium;
+}
+
 .origin-input {
   @apply bg-input border border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md px-3 py-2 transition-colors;
 }
@@ -67,6 +71,237 @@
   @apply bg-accent text-accent-foreground;
 }
 
+/* Origin UI Table Styling */
+.origin-table-header {
+  @apply text-[var(--color-tertiary-700)] font-semibold;
+}
+
+.origin-table-cell {
+  @apply text-foreground;
+}
+
+/* Origin UI Component Specific Styles */
+.origin-ui-button {
+  background-color: var(--color-tertiary-600);
+  color: hsl(0 0% 98%);
+}
+
+.origin-ui-button:disabled {
+  background-color: var(--color-tertiary-400);
+  color: var(--color-secondary-900);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.origin-ui-button:hover:not(:disabled) {
+  background-color: var(--color-tertiary-500);
+}
+
+.origin-ui-background {
+  background-color: var(--color-primary-200);
+}
+
+.origin-ui-text {
+  color: var(--color-secondary-900);
+}
+
+.origin-ui-table-heading {
+  color: var(--color-tertiary-700);
+  font-weight: 600;
+}
+
+/* Additional Origin UI Utility Classes */
+.origin-ui-card {
+  background-color: var(--color-primary-200);
+  border: 1px solid var(--color-primary-100);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.origin-ui-card-header {
+  background-color: var(--color-primary-100);
+  border-bottom: 1px solid var(--color-primary-100);
+  padding: 1rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.origin-ui-card-content {
+  padding: 1rem;
+}
+
+.origin-ui-badge {
+  background-color: var(--color-tertiary-600);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.origin-ui-badge-secondary {
+  background-color: var(--color-tertiary-400);
+  color: var(--color-secondary-900);
+}
+
+.origin-ui-link {
+  color: var(--color-tertiary-600);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.origin-ui-link:hover {
+  color: var(--color-tertiary-500);
+  text-decoration: underline;
+}
+
+.origin-ui-divider {
+  border-top: 1px solid var(--color-primary-100);
+  margin: 1rem 0;
+}
+
+.origin-ui-highlight {
+  background-color: var(--color-tertiary-400);
+  color: var(--color-secondary-900);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.origin-ui-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.origin-ui-warning {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.origin-ui-error {
+  background-color: #ef4444;
+  color: white;
+}
+
+.origin-ui-info {
+  background-color: var(--color-tertiary-600);
+  color: white;
+}
+
+/* Chart-specific Origin UI styles */
+.origin-ui-chart-container {
+  background-color: var(--color-primary-200);
+  border: 1px solid var(--color-primary-100);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.origin-ui-chart-title {
+  color: var(--color-tertiary-700);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.origin-ui-chart-subtitle {
+  color: var(--color-secondary-800);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* Form-specific Origin UI styles */
+.origin-ui-form-group {
+  margin-bottom: 1rem;
+}
+
+.origin-ui-form-label {
+  display: block;
+  color: var(--color-secondary-900);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.origin-ui-form-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-primary-100);
+  border-radius: 0.375rem;
+  background-color: var(--color-primary-50);
+  color: var(--color-secondary-900);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.origin-ui-form-input:focus {
+  outline: none;
+  border-color: var(--color-tertiary-500);
+  box-shadow: 0 0 0 3px rgba(98, 87, 165, 0.1);
+}
+
+.origin-ui-form-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-primary-100);
+  border-radius: 0.375rem;
+  background-color: var(--color-primary-50);
+  color: var(--color-secondary-900);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.origin-ui-form-select:focus {
+  outline: none;
+  border-color: var(--color-tertiary-500);
+  box-shadow: 0 0 0 3px rgba(98, 87, 165, 0.1);
+}
+
+/* Loading and state-specific Origin UI styles */
+.origin-ui-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--color-secondary-800);
+}
+
+.origin-ui-loading-spinner {
+  border: 2px solid var(--color-primary-100);
+  border-top: 2px solid var(--color-tertiary-500);
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.origin-ui-empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-secondary-800);
+}
+
+.origin-ui-empty-state-icon {
+  font-size: 3rem;
+  color: var(--color-primary-100);
+  margin-bottom: 1rem;
+}
+
+.origin-ui-empty-state-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-secondary-900);
+  margin-bottom: 0.5rem;
+}
+
+.origin-ui-empty-state-description {
+  color: var(--color-secondary-800);
+  margin-bottom: 1rem;
+}
+
 :root {
   /* Origin UI Custom Color Scheme */
   /* Primary Colors - Backgrounds and neutral elements */
@@ -85,7 +320,7 @@
   --color-tertiary-700: #201b50;
 
   /* Updated design system variables using new color scheme */
-  --background: hsl(0 0% 100%);
+  --background: var(--color-primary-200);
   --foreground: var(--color-secondary-900);
 
   --card: var(--color-primary-200);
@@ -94,7 +329,7 @@
   --popover: var(--color-primary-200);
   --popover-foreground: var(--color-secondary-900);
 
-  --primary: var(--color-tertiary-500);
+  --primary: var(--color-tertiary-600);
   --primary-foreground: hsl(0 0% 98%);
 
   --secondary: var(--color-primary-100);
@@ -240,3 +475,165 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Scrollbar Styles - Global */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.2);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
+  background-clip: content-box;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+.custom-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+}
+
+/* Sidebar specific scrollbar */
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.2);
+  border-radius: 2px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
+}
+
+.sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.2) transparent;
+}
+
+/* Main content scrollbar */
+.main-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.2);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.main-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
+  background-clip: content-box;
+}
+
+.main-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.2) transparent;
+}
+
+/* Table scrollbar */
+.table-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.2);
+  border-radius: 3px;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
+}
+
+.table-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.2) transparent;
+}
+
+/* Hide scrollbar completely for specific elements */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth scrolling for better UX */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Documentation for scrollbar classes:
+ * 
+ * Available classes:
+ * - .custom-scrollbar: General purpose subtle scrollbar (6px width)
+ * - .sidebar-scrollbar: Sidebar-specific scrollbar (4px width, very subtle)
+ * - .main-scrollbar: Main content scrollbar (8px width, with padding)
+ * - .table-scrollbar: Table scrollbar (6px width, optimized for data)
+ * - .no-scrollbar: Completely hide scrollbar
+ * - .smooth-scroll: Enable smooth scrolling behavior
+ * 
+ * Usage:
+ * <div className="overflow-auto custom-scrollbar">...</div>
+ * <div className="overflow-auto sidebar-scrollbar">...</div>
+ * <div className="overflow-auto main-scrollbar">...</div>
+ * <div className="overflow-auto table-scrollbar">...</div>
+ * <div className="overflow-auto no-scrollbar">...</div>
+ */

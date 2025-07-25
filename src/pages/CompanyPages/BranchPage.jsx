@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import SearchFilter from "../../components/SearchFilter";
 import ReusableTable from "../../components/ReusableTable"; // Import the reusable table
 import { Pencil, Trash2 } from "lucide-react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
 
 const BranchPage = () => {
   const navigate = useNavigate();
@@ -102,38 +102,34 @@ const BranchPage = () => {
     return_and_exchange_policy: branch.return_and_exchange_policy || "N/A",
     actions: (
       <div className="flex space-x-2">
-        <button
+        <Button
           onClick={() => handleUpdate(branch.id)}
-          className="inline-flex items-center px-2 py-1 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white focus:outline-none text-sm"
+          variant="outline"
+          size="sm"
+          className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
         >
           <Pencil className="h-4 w-4 mr-1" />
           Update
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => handleDelete(branch.id)}
-          className="inline-flex items-center px-2 py-1 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white focus:outline-none text-sm"
+          variant="outline"
+          size="sm"
+          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
         >
           <Trash2 className="h-4 w-4 mr-1" />
           Delete
-        </button>
+        </Button>
       </div>
     ),
   }));
 
   return (
-    <div className="branch-page">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <h1 className="page-title">Branch Details</h1>
+    <div className="p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-[#201b50] mb-2">Branch Details</h1>
+      </div>
+      
       <SearchFilter
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -142,8 +138,11 @@ const BranchPage = () => {
           navigate(`/add-branch`);
         }}
       />
+      
       {isLoading ? (
-        <p>Loading branches...</p>
+        <div className="text-center py-8">
+          <p className="text-[#101023]">Loading branches...</p>
+        </div>
       ) : (
         <ReusableTable headers={branchHeaders} data={branchData} />
       )}

@@ -7,6 +7,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ImageModal from "/src/components/ImageModal";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
 
 const AssetPage = () => {
   const navigate = useNavigate();
@@ -119,20 +120,24 @@ const AssetPage = () => {
       : "N/A",
     actions: (
       <div className="flex space-x-2">
-        <button
+        <Button
           onClick={() => navigate(`/update-asset`, { state: { asset } })}
-          className="inline-flex items-center px-2 py-1 border border-yellow-500 text-yellow-500 rounded hover:bg-yellow-500 hover:text-white focus:outline-none text-sm"
+          variant="outline"
+          size="sm"
+          className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
         >
           <Pencil className="h-4 w-4 mr-1" />
           Update
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => handleDelete(asset.id)}
-          className="inline-flex items-center px-2 py-1 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white focus:outline-none text-sm"
+          variant="outline"
+          size="sm"
+          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
         >
           <Trash2 className="h-4 w-4 mr-1" />
           Delete
-        </button>
+        </Button>
       </div>
     ),
   }));
@@ -141,19 +146,10 @@ const AssetPage = () => {
   if (error) return <div className="text-red-500 text-center mt-4">{error}</div>;
 
   return (
-    <div className="asset-page">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <h1 className="page-title">Asset Details</h1>
+    <div className="p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-[#201b50] mb-2">Asset Details</h1>
+      </div>
       <SearchFilter
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -169,6 +165,17 @@ const AssetPage = () => {
         imageSrc={selectedImage}
         altText="Enlarged Bill" // You can make this dynamic if needed
         onClose={() => setSelectedImage(null)}
+      />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
     </div>
   );

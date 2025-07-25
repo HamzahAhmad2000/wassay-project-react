@@ -5,6 +5,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import { Star } from "lucide-react";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
+import { Textarea } from "../../additionalOriginuiComponents/ui/textarea";
 
 const CustomerReview = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -56,9 +62,8 @@ const CustomerReview = ({ mode = "add" }) => {
       });
   }, [navigate, user.id]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleStarClick = (index) => {
@@ -117,100 +122,119 @@ const CustomerReview = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h2 className="form-heading text-2xl font-bold mb-6 text-center">
-        {mode === "add" ? "Add Customer Review" : "Edit Customer Review"}
-      </h2>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Customer Review" : "Edit Customer Review"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isFetchingCustomers && <p className="text-center text-gray-500">Loading customers...</p>}
+            {!isFetchingCustomers && customers.length === 0 && (
+              <p className="text-center text-yellow-500">No customers available.</p>
+            )}
 
-      {isFetchingCustomers && <p className="text-center text-gray-500">Loading customers...</p>}
-      {!isFetchingCustomers && customers.length === 0 && (
-        <p className="text-center text-yellow-500">No customers available.</p>
-      )}
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {/* Customer Dropdown */}
+              <div className="space-y-2">
+                <Label htmlFor="customer" className="text-[#101023] font-medium">
+                  Customer <span className="text-red-500">*</span>
+                </Label>
+                <Select 
+                  value={formData.customer} 
+                  onValueChange={(value) => handleChange("customer", value)}
+                  disabled={isFetchingCustomers}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a Customer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.first_name} {customer.last_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Review Title */}
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-[#101023] font-medium">
+                  Title 
+                </Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => handleChange("title", e.target.value)}
+                  className="w-full"
+                  placeholder="Write your title here..."
+                />
+              </div>
+              
+              {/* Review Text */}
+              <div className="space-y-2">
+                <Label htmlFor="review" className="text-[#101023] font-medium">
+                  Review <span className="text-red-500">*</span>
+                </Label>
+                <Textarea
+                  id="review"
+                  value={formData.review}
+                  onChange={(e) => handleChange("review", e.target.value)}
+                  className="w-full"
+                  rows="4"
+                  placeholder="Write your review here..."
+                  required
+                />
+              </div>
 
-      <form className="customer-form space-y-4" onSubmit={handleSubmit}>
-        {/* Customer Dropdown */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Customer <span className="text-red-500">*</span>
-          </label>
-          <select
-            name="customer"
-            value={formData.customer}
-            onChange={handleChange}
-            className="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-            required
-            disabled={isFetchingCustomers}
-          >
-            <option value="" disabled>Select a Customer</option>
-            {customers.map((customer) => (
-              <option key={customer.id} value={customer.id}>
-                {customer.first_name} {customer.last_name}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* Review Title */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Title 
-          </label>
-          <input
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            rows={2}
-            className="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-            placeholder="Write your title here..."
-          />
-        </div>
-        {/* Review Text */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Review <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            name="review"
-            value={formData.review}
-            onChange={handleChange}
-            rows={4}
-            className="form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-            placeholder="Write your review here..."
-            required
-          ></textarea>
-        </div>
+              {/* Star Rating */}
+              <div className="space-y-2">
+                <Label className="text-[#101023] font-medium">
+                  Rating <span className="text-red-500">*</span>
+                </Label>
+                <div className="flex space-x-1 mt-2">
+                  {[1, 2, 3, 4, 5].map((index) => (
+                    <button
+                      type="button"
+                      key={index}
+                      onClick={() => handleStarClick(index)}
+                      className={`text-yellow-400 hover:scale-110 transition-transform ${
+                        index <= formData.stars ? "fill-current" : "text-gray-300"
+                      }`}
+                    >
+                      <Star fill={index <= formData.stars ? "currentColor" : "none"} className="w-6 h-6" />
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-        {/* Star Rating */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Rating <span className="text-red-500">*</span>
-          </label>
-          <div className="flex space-x-1 mt-2">
-            {[1, 2, 3, 4, 5].map((index) => (
-              <button
-                type="button"
-                key={index}
-                onClick={() => handleStarClick(index)}
-                className={`text-yellow-400 hover:scale-110 transition-transform ${
-                  index <= formData.stars ? "fill-current" : "text-gray-300"
-                }`}
-              >
-                <Star fill={index <= formData.stars ? "currentColor" : "none"} className="w-6 h-6" />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className={`w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-            loading || isFetchingCustomers ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={loading || isFetchingCustomers}
-        >
-          {loading ? "Processing..." : mode === "add" ? "Add Review" : "Update Review"}
-        </button>
-      </form>
+              {/* Submit Button */}
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/customer-reviews')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading || isFetchingCustomers}
+                  className={`bg-[#423e7f] text-white hover:bg-[#201b50] ${
+                    loading || isFetchingCustomers ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {loading ? "Processing..." : mode === "add" ? "Add Review" : "Update Review"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

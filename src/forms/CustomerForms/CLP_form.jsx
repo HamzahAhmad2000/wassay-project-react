@@ -8,6 +8,11 @@ import PropTypes from 'prop-types';
 import { getCompanies } from "/src/APIs/CompanyAPIs";
 import { toast } from "react-toastify";
 import { getCustomers } from "/src/APIs/CustomerAPIs";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const CLPForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -53,9 +58,8 @@ const CLPForm = ({ mode = "add" }) => {
     }
   }, [success, error]);
 
-  const handleChange = async(e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   }
 
   const validateForm = () => {
@@ -103,62 +107,79 @@ const CLPForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Customer" : "Edit Customer"}</h2>
-      <form className="customer-form" onSubmit={handleSubmit}>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Customer" : "Edit Customer"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
 
-        {user && user.is_superuser && (
-          <div className="form-group">
-            <label htmlFor="company">Company</label>
-            <select
-              id="company"
-              value={formData.company}
-              onChange={handleChange}
-              required
-              name='company'
-            >
-              <option value="">Select Company</option>
-              {companies.map((company) => (
-                <option key={company.id} value={company.id}>{company.name}</option>
-              ))}
-            </select>
-          </div>
-        )}
-          <div className="form-group">
-            <label htmlFor="branch">Customer</label>
-            <select
-              id="branch"
-              value={formData.customer}
-              onChange={handleChange}
-              required
-              name='customer'
-            >
-              <option value="">Select Customer</option>
-              {customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>{customer.first_name} {customer.last_name}</option>
-              ))}
-            </select>
-          </div>
-        <div className="form-group">
-          <label>Points:</label>
-          <input
-            type="number"
-            value={formData.points}
-            onChange={handleChange}
-            className="form-input"
-            name='points'
-            // required
-          />
-        </div>
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <Select value={formData.company} onValueChange={(value) => handleChange("company", value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>{company.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="customer" className="text-[#101023] font-medium">Customer</Label>
+                <Select value={formData.customer} onValueChange={(value) => handleChange("customer", value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Customer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id}>{customer.first_name} {customer.last_name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="points" className="text-[#101023] font-medium">Points</Label>
+                <Input
+                  id="points"
+                  type="number"
+                  value={formData.points}
+                  onChange={(e) => handleChange("points", e.target.value)}
+                  className="w-full"
+                />
+              </div>
 
+              {error && <p className="error-text text-red-500 text-center">{error}</p>}
+              {success && <p className="success-text text-green-500 text-center">{success}</p>}
 
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
-
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Customer Loyalty Points" : "Update Customer Loyalty Points"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/CLP')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Customer Loyalty Points" : "Update Customer Loyalty Points"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

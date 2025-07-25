@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { getBranches, getWareHouses, getFloors, getAisle, getSide } from '../APIs/CompanyAPIs';
 import { getInventoryByBranch } from '../APIs/ProductAPIs';
+import { Button } from "../additionalOriginuiComponents/ui/button";
+import { Input } from "../additionalOriginuiComponents/ui/input";
+import { Label } from "../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../additionalOriginuiComponents/ui/select";
 
 const InventoryTransferForm = () => {
   const [formData, setFormData] = useState({
@@ -150,234 +155,249 @@ const InventoryTransferForm = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Inventory Transfer</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* From Section */}
-        <div className="flex flex-col space-y-2">
-          <label className="text-gray-700 font-medium">Transfer From:</label>
-          <div className="flex space-x-4">
-            <select
-              name="from_type"
-              value={formData.from_type}
-              onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="warehouse">Warehouse</option>
-              <option value="branch">Branch</option>
-            </select>
-            <select
-              name="from"
-              value={formData.from}
-              onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select {formData.from_type}</option>
-              {(formData.from_type === 'warehouse' ? warehouses : branches).map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name} (ID: {item.id})
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              Inventory Transfer
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {/* From Section */}
+              <div className="space-y-2">
+                <Label className="text-[#101023] font-medium">Transfer From:</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Select value={formData.from_type} onValueChange={(value) => handleChange({ target: { name: 'from_type', value } })}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="warehouse">Warehouse</SelectItem>
+                      <SelectItem value="branch">Branch</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={formData.from} onValueChange={(value) => handleChange({ target: { name: 'from', value } })}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={`Select ${formData.from_type}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(formData.from_type === 'warehouse' ? warehouses : branches).map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name} (ID: {item.id})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-        {/* To Section */}
-        <div className="flex flex-col space-y-2">
-          <label className="text-gray-700 font-medium">Transfer To:</label>
-          <div className="flex space-x-4">
-            <select
-              name="to_type"
-              value={formData.to_type}
-              onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="warehouse">Warehouse</option>
-              <option value="branch">Branch</option>
-            </select>
-            <select
-              name="to"
-              value={formData.to}
-              onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select {formData.to_type}</option>
-              {(formData.to_type === 'warehouse' ? warehouses : branches).map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name} (ID: {item.id})
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+              {/* To Section */}
+              <div className="space-y-2">
+                <Label className="text-[#101023] font-medium">Transfer To:</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Select value={formData.to_type} onValueChange={(value) => handleChange({ target: { name: 'to_type', value } })}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="warehouse">Warehouse</SelectItem>
+                      <SelectItem value="branch">Branch</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={formData.to} onValueChange={(value) => handleChange({ target: { name: 'to', value } })}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={`Select ${formData.to_type}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(formData.to_type === 'warehouse' ? warehouses : branches).map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name} (ID: {item.id})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-        {/* Product Input */}
-        <div className="flex flex-col space-y-2">
-          <h4 className="text-lg font-semibold text-gray-700">Add Products</h4>
-          <div className="flex space-x-4">
-            <select
-              name="id"
-              value={productInput.id}
-              onChange={handleProductChange}
-              className="w-1/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.from}
-            >
-              <option value="">Select Product</option>
-              {inventory.map((item, index) => (
-                <option key={item.id} value={item.id}>
-                {`${item.product_name}${item.product_weight ? ` - ${item.product_weight}` : ''} - $${item.retail_price} (Stock: ${item.quantity_in_stock})`}
-              </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              name="quantity"
-              value={productInput.quantity}
-              onChange={handleProductChange}
-              placeholder="Quantity"
-              min="1"
-              className="w-1/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.from}
-            />
-            
+              {/* Product Input */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-lg font-semibold text-[#101023]">Add Products</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Product</Label>
+                    <Select value={productInput.id} onValueChange={(value) => handleProductChange({ target: { name: 'id', value } })} disabled={!formData.from}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Product" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {inventory.map((item, index) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {`${item.product_name}${item.product_weight ? ` - ${item.product_weight}` : ''} - $${item.retail_price} (Stock: ${item.quantity_in_stock})`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Quantity</Label>
+                    <Input
+                      type="number"
+                      value={productInput.quantity}
+                      onChange={handleProductChange}
+                      placeholder="Quantity"
+                      min="1"
+                      className="w-full"
+                      disabled={!formData.from}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Floor</Label>
+                    <Select onValueChange={(value) => setFilteredAisle(aisle.filter((ai) => ai.floor == value))} disabled={!formData.from}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Floor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {floors.map((floor) => (
+                          <SelectItem key={floor.id} value={floor.id}>
+                            {`${floor.number} - ${floor.name}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Aisle</Label>
+                    <Select onValueChange={(value) => setFilteredSide(side.filter((ai) => ai.aisle == value))} disabled={!formData.from}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Aisle" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filteredAisle.map((ai) => (
+                          <SelectItem key={ai.id} value={ai.id}>
+                            {`${ai.name} - ${ai.number}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Side</Label>
+                    <Select value={productInput.placement} onValueChange={(value) => handleProductChange({ target: { name: 'placement', value } })} disabled={!formData.from}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Side" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filteredSide.map((side) => (
+                          <SelectItem key={side.id} value={side.id}>
+                            {side.side}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">&nbsp;</Label>
+                    <Button
+                      type="button"
+                      onClick={addProduct}
+                      className="w-full bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-400"
+                      disabled={!formData.from}
+                    >
+                      Add Product
+                    </Button>
+                  </div>
+                </div>
+              </div>
 
+              {/* Product List */}
+              {formData.products.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-lg font-semibold text-[#101023]">Products to Transfer</h4>
+                  {formData.products.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-gray-700 border border-gray-200 rounded-md">
+                        <thead>
+                          <tr className="bg-gray-100">
+                            <th className="p-2 font-semibold">Product Name</th>
+                            <th className="p-2 font-semibold">Category</th>
+                            <th className="p-2 font-semibold">Weight/Quantity</th>
+                            <th className="p-2 font-semibold">Retail Price</th>
+                            <th className="p-2 font-semibold">Quantity</th>
+                            <th className="p-2 font-semibold">Placement</th>
+                            <th className="p-2 font-semibold">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {formData.products.map((product, index) => {
+                            const productDetails = inventory.find((item) => item.id === product.id);
+                            return (
+                              <tr key={index} className="border-b last:border-b-0 bg-gray-50 hover:bg-gray-100">
+                                <td className="p-2">
+                                  {productDetails ? productDetails.product_name : `ID: ${product.id}`}
+                                </td>
+                                <td className="p-2">
+                                  {productDetails ? productDetails.category.category_name : `ID: ${product.id}`}
+                                </td>
+                                <td className="p-2">
+                                  {productDetails && productDetails.product_weight
+                                    ? productDetails.product_weight
+                                    : "N/A"}
+                                </td>
+                                <td className="p-2">
+                                  {productDetails ? `$${productDetails.retail_price}` : "N/A"}
+                                </td>
+                                <td className="p-2">{product.quantity}</td>
+                                <td className="p-2">{product.placement}</td>
+                                <td className="p-2">
+                                  <Button
+                                    type="button"
+                                    onClick={() => removeProduct(index)}
+                                    className="text-red-500 hover:text-red-700"
+                                    variant="ghost"
+                                  >
+                                    Remove
+                                  </Button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No products added yet.</p>
+                  )}
+                </div>
+              )}
 
-            <select
-              onChange={(e)=>{
-                setFilteredAisle(aisle.filter((ai) => ai.floor == e.target.value));
-              }}
-              className="w-1/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.from}
-            >
-              <option value="">Select Floor</option>
-              {floors.map((floor) => (
-                <option key={floor.id} value={floor.id}>
-                {`${floor.number} - ${floor.name}`}
-              </option>
-              ))}
-            </select>
+              {/* Submit Button */}
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  className="bg-green-500 text-white hover:bg-green-600"
+                >
+                  Transfer Inventory
+                </Button>
+              </div>
+            </form>
 
-            <select
-              onChange={(e)=>{
-                setFilteredSide(side.filter((ai) => ai.aisle == e.target.value));
-              }}
-              className="w-1/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.from}
-            >
-              <option value="">Select Aisle</option>
-              {filteredAisle.map((ai) => (
-                <option key={ai.id} value={ai.id}>
-                {`${ai.name} - ${ai.number}`}
-              </option>
-              ))}
-            </select>
-
-            <select
-              name="placement"
-              value={productInput.placement}
-              onChange={handleProductChange}
-              className="w-1/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.from}
-            >
-              <option value="">Select Side</option>
-              {filteredSide.map((side) => (
-                <option key={side.id} value={side.id}>
-                {`${side.side}`}
-              </option>
-              ))}
-            </select>
-
-
-            <button
-              type="button"
-              onClick={addProduct}
-              className="w-1/3 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400"
-              disabled={!formData.from}
-            >
-              Add Product
-            </button>
-          </div>
-        </div>
-
-        {/* Product List */}
-        {formData.products.length > 0 && (
-  <div className="space-y-2">
-  <h4 className="text-lg font-semibold text-gray-700">Products to Transfer</h4>
-  {formData.products.length > 0 ? (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left text-gray-700 border border-gray-200 rounded-md">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 font-semibold">Product Name</th>
-            <th className="p-2 font-semibold">Category</th>
-            <th className="p-2 font-semibold">Weight/Quantity</th>
-            <th className="p-2 font-semibold">Retail Price</th>
-            <th className="p-2 font-semibold">Quantity</th>
-            <th className="p-2 font-semibold">Placement</th>
-            <th className="p-2 font-semibold">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {formData.products.map((product, index) => {
-            const productDetails = inventory.find((item) => item.id === product.id);
-            return (
-              <tr key={index} className="border-b last:border-b-0 bg-gray-50 hover:bg-gray-100">
-                <td className="p-2">
-                  {productDetails ? productDetails.product_name : `ID: ${product.id}`}
-                </td>
-                <td className="p-2">
-                  {productDetails ? productDetails.category.category_name : `ID: ${product.id}`}
-                </td>
-                <td className="p-2">
-                  {productDetails && productDetails.product_weight
-                    ? productDetails.product_weight
-                    : "N/A"}
-                </td>
-                <td className="p-2">
-                  {productDetails ? `$${productDetails.retail_price}` : "N/A"}
-                </td>
-                <td className="p-2">{product.quantity}</td>
-                <td className="p-2">{product.placement}</td>
-                <td className="p-2">
-                  <button
-                    type="button"
-                    onClick={() => removeProduct(index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Remove
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  ) : (
-    <p className="text-gray-500">No products added yet.</p>
-  )}
-</div>
-)}
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full p-3 bg-green-500 text-white rounded-md hover:bg-green-600"
-        >
-          Transfer Inventory
-        </button>
-      </form>
-
-      {/* Message Display */}
-      {message && (
-        <div
-          className={`mt-4 p-2 rounded-md text-center ${
-            message.includes('error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-          }`}
-        >
-          {message}
-        </div>
-      )}
+            {/* Message Display */}
+            {message && (
+              <div
+                className={`mt-4 p-2 rounded-md text-center ${
+                  message.includes('error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+                }`}
+              >
+                {message}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

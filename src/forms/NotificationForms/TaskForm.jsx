@@ -4,6 +4,11 @@ import PropTypes from "prop-types";
 import { getUsers } from "/src/APIs/UserAPIs";
 import { postNotifications } from "/src/APIs/NotificationAPIs";
 import { toast } from "react-toastify";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const TaskForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -71,80 +76,105 @@ const TaskForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Task" : "Edit Task"}</h2>
-      <form className="task-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>To:</label>
-          <select
-            name="_to"
-            value={task._to}
-            onChange={handleChange}
-            className="form-input"
-          >
-            <option value="">Select Responsible Person</option>
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.role || ""} - {user.user_name}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label>Details:</label>
-          <textarea
-            name="details"
-            value={task.details}
-            onChange={handleChange}
-            className="form-input"
-          ></textarea>
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Task" : "Edit Task"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="to" className="text-[#101023] font-medium">
+                  To:
+                </Label>
+                <Select
+                  value={task._to}
+                  onValueChange={(value) => setTasks(prev => ({...prev, _to: value}))}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Responsible Person" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.role || ""} - {user.user_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="details" className="text-[#101023] font-medium">
+                  Details:
+                </Label>
+                <textarea
+                  id="details"
+                  name="details"
+                  value={task.details}
+                  onChange={handleChange}
+                  className="w-full min-h-[100px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent"
+                />
+              </div>
 
-        
-        
-        <div className="form-group">
-          <label>
-            Priority Level: <strong>{task.priority_level}</strong>
-          </label>
-          <input
-            type="range"
-            name="priority_level"
-            min={1}
-            max={10}
-            value={task.priority_level}
-            onChange={handleChange}
-            style={{
-              background: `linear-gradient(to right, green, red ${task.priority_level * 10}%)`
-            }}
-            className="form-input"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="priority_level" className="text-[#101023] font-medium">
+                  Priority Level: <strong>{task.priority_level}</strong>
+                </Label>
+                <input
+                  type="range"
+                  name="priority_level"
+                  min={1}
+                  max={10}
+                  value={task.priority_level}
+                  onChange={handleChange}
+                  style={{
+                    background: `linear-gradient(to right, green, red ${task.priority_level * 10}%)`
+                  }}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>
-            Due Date:
-          </label>
-          <input
-            type="date"
-            name="date"
-            value={task.date}
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="date" className="text-[#101023] font-medium">
+                  Due Date:
+                </Label>
+                <Input
+                  id="date"
+                  type="date"
+                  name="date"
+                  value={task.date}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
 
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
 
-        
-
-
-        {error && <p className="error-text">{error}</p>}
-        {success && <p className="success-text">{success}</p>}
-
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Task" : "Update Task"}
-        </button>
-      </form>
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/tasks")}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Task" : "Update Task"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

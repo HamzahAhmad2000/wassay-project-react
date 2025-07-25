@@ -22,7 +22,7 @@ const ReusableTable = ({ headers, data }) => {
               <th
                 key={header.key}
                 onClick={() => header.sortable && handleSort(header.key)}
-                className={`px-3 py-2 md:px-4 md:py-3 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer ${
+                className={`px-3 py-2 md:px-4 md:py-3 text-xs font-medium text-[#201b50] uppercase tracking-wider cursor-pointer ${
                   header.sortable ? "hover:bg-gray-100" : "cursor-default"
                 } ${sortBy === header.key ? "font-semibold" : ""}`}
               >
@@ -32,9 +32,9 @@ const ReusableTable = ({ headers, data }) => {
                     <span className="ml-2">
                       {sortBy === header.key ? (
                         sortDirection === "asc" ? (
-                          <SortAsc className="h-4 w-4 text-gray-700" />
+                          <SortAsc className="h-4 w-4 text-[#201b50]" />
                         ) : (
-                          <SortDesc className="h-4 w-4 text-gray-700" />
+                          <SortDesc className="h-4 w-4 text-[#201b50]" />
                         )
                       ) : (
                         <SortAscIcon className="h-4 w-4 text-gray-400" />
@@ -53,7 +53,7 @@ const ReusableTable = ({ headers, data }) => {
               {headers.map((header) => (
                 <td
                   key={`${index}-${header.key}`} // Consider using item.id if available and unique for a more stable key
-                  className="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm text-gray-700"
+                  className="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm text-[#101023]"
                 >
                   {/* --- THIS IS THE CORRECTED LINE --- */}
                   {header.render ? header.render(item) : item[header.key]}

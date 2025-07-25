@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
-import { Card, CardContent } from "../../components/ui/card";
+import { Card, CardContent } from "../additionalOriginuiComponents/ui/card";
 import { formatDate } from "../utilityFunctions/unitilityFunctions";
 import SalesChart from "./SalesChart";
 import Loader from "./Loader";

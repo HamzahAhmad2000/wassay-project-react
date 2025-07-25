@@ -7,7 +7,11 @@ import "/src/styles/FormStyles.css";
 import PropTypes from 'prop-types';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Select from "react-select";
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const BankForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -53,26 +57,8 @@ const BankForm = ({ mode = "add" }) => {
     }
   }, [navigate]);
 
-  // const validateForm = () => {
-  //   if (!name.trim()) {
-  //     toast.error("Bank name is required");
-  //     return false;
-  //   }
-  //   if (!category) {
-  //     toast.error("Bank category is required");
-  //     return false;
-  //   }
-  //   if (!companyScale) {
-  //     toast.error("Bank scale is required");
-  //     return false;
-  //   }
-  //   return true;
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // if (!validateForm()) return;
 
     try {
       let response;
@@ -86,15 +72,6 @@ const BankForm = ({ mode = "add" }) => {
       if (data.id) {
         toast.success(data.id || 
           (mode === "add" ? "Bank added successfully!" : "Bank updated successfully!"));
-        
-        // if (mode === "add") {
-        //   setName("");
-        //   setLogo(null);
-        //   setCategory("");
-        //   setHqLocation("");
-        //   setLatLong("");
-        //   setBankScale("");
-        // }
         setTimeout(() => navigate("/banks"), 1500);
       } else {
         toast.error(data.non_field_errors[0] || "An error occurred while saving the company");
@@ -105,109 +82,105 @@ const BankForm = ({ mode = "add" }) => {
     }
   };
 
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }));
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-heading">{mode === "add" ? "Add Bank" : "Edit Bank"}</h2>
-      <form onSubmit={handleSubmit} className="company-form">
-        {user && user.is_superuser && (
-          <>
-        <div className="form-group">
-          <label>Company:</label>
-          <Select
-            value={companies
-              .map((company) => ({
-                value: company.id,
-                label: company.name,
-              }))
-              .find((option) => option.value === formData.company) || null}
-              onChange={(selectedOption) => {
-                handleChange({
-                  target: {
-                    name: "company",
-                    value: selectedOption ? selectedOption.value : null, // Just the ID
-                  },
-                });
-              }}
-              name="company"
-              required
-              className="form-input"
-              options={companies.map((company) => ({
-                value: company.id,
-                label: company.name,
-              }))}
-              placeholder="Select Company"
-              />
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Bank" : "Edit Bank"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {user && user.is_superuser && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                    <Select value={formData.company_id} onValueChange={(value) => handleChange("company_id", value)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Company" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {companies.map((company) => (
+                          <SelectItem key={company.id} value={company.id}>
+                            {company.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-        </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="branch" className="text-[#101023] font-medium">Branch</Label>
+                    <Select value={formData.branch_id} onValueChange={(value) => handleChange("branch_id", value)}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {branches.map((branch) => (
+                          <SelectItem key={branch.id} value={branch.id}>
+                            {branch.location}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="cash" className="text-[#101023] font-medium">Cash In Hand</Label>
+                <Input
+                  id="cash"
+                  type="number"
+                  min={0}
+                  value={formData.cash}
+                  onChange={(e) => handleChange("cash", e.target.value)}
+                  placeholder="69000"
+                  className="w-full"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Branch:</label>
-          <Select
-            value={branches
-              .map((branch) => ({
-                value: branch.id,
-                label: branch.location,
-              }))
-              .find((option) => option.value === formData.branch) || null}
-            onChange={(selectedOption) => {
-              handleChange({
-                target: {
-                  name: "branch",
-                  value: selectedOption ? selectedOption.value : null, // Just the ID
-                },
-              });
-            }}
-            name="branch"
-            required
-            className="form-input"
-            options={branches.map((branch) => ({
-              value: branch.id,
-              label: branch.location,
-            }))}
-            placeholder="Select Company"
-          />
-
-        </div>
-            </>)}
-        <div className="form-group">
-          <label>Cash In Hand:</label>
-          <input
-            type="number"
-            name="cash"
-            min={0}
-            value={formData.cash}
-            onChange={handleChange}
-            placeholder="69000"
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Amount In Bank:</label>
-          <input
-            type="number"
-            name="bank"
-            min={0}
-            value={formData.bank}
-            onChange={handleChange}
-            placeholder="69000"
-            className="form-input"
-          />
-        </div>
-        
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Bank" : "Update Bank"}
-        </button>
-      </form>
+              <div className="space-y-2">
+                <Label htmlFor="bank" className="text-[#101023] font-medium">Amount In Bank</Label>
+                <Input
+                  id="bank"
+                  type="number"
+                  min={0}
+                  value={formData.bank}
+                  onChange={(e) => handleChange("bank", e.target.value)}
+                  placeholder="69000"
+                  className="w-full"
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/banks')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Bank" : "Update Bank"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { getCompanies, getBranches, getWareHouses, getFloors, getAisle, getSide } from '../APIs/CompanyAPIs';
 import { getInventoryByBranch, postInventoryTransfer } from '../APIs/ProductAPIs';
 import { toast } from 'react-toastify';
+import { Button } from "../additionalOriginuiComponents/ui/button";
+import { Input } from "../additionalOriginuiComponents/ui/input";
+import { Label } from "../additionalOriginuiComponents/ui/label";
+import { Card, CardHeader, CardTitle, CardContent } from "../additionalOriginuiComponents/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../additionalOriginuiComponents/ui/select";
 
 const InventoryTransferForm2 = () => {
 
@@ -73,16 +78,11 @@ const InventoryTransferForm2 = () => {
     fetchInventory();
   }, [formData.company, formData.from_type, formData.from_id]);
 
-
-
   useEffect(()=>{
-
     console.log("from", formData.from_type)
     console.log("to", formData.to_type)
-
     console.log(branches)
     console.log(warehouses)
-
   }, [formData.to_type, formData.from_type])
 
   // Filter aisles and sides when floor or aisle changes
@@ -150,192 +150,209 @@ const InventoryTransferForm2 = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Inventory Transfer</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Company Selection */}
-        <div className="flex flex-col space-y-2">
-          <label className="text-gray-700 font-medium">Company:</label>
-          <select
-            name="company"
-            value={formData.company}
-            onChange={handleChange}
-            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select Company</option>
-            {companies.map((company) => (
-              <option key={company.id} value={company.id}>
-                {company.name}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              Inventory Transfer
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {/* Company Selection */}
+              <div className="space-y-2">
+                <Label className="text-[#101023] font-medium">Company:</Label>
+                <Select value={formData.company} onValueChange={(value) => handleChange({ target: { name: 'company', value } })}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Company" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {companies.map((company) => (
+                      <SelectItem key={company.id} value={company.id}>
+                        {company.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        {/* From Section */}
-        <div className="flex flex-col space-y-2">
-          <label className="text-gray-700 font-medium">Transfer From:</label>
-          <div className="flex space-x-4">
-            <select
-              name="from_type"
-              value={formData.from_type}
-              onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="Branch">Branch</option>
-              <option value="Warehouse">Warehouse</option>
-            </select>
-            <select
-              name="from_id"
-              value={formData.from_id}
-              onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.company}
-            >
-              <option value="">Select {formData.from_type}</option>
-              {(formData.from_type == 'Warehouse' ? warehouses : branches)
-                .filter((item) => item.company_id === Number(formData.company))
-                .map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.location} (ID: {item.id})
-                  </option>
-                ))}
-            </select>
-          </div>
-        </div>
+              {/* From Section */}
+              <div className="space-y-2">
+                <Label className="text-[#101023] font-medium">Transfer From:</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Select value={formData.from_type} onValueChange={(value) => handleChange({ target: { name: 'from_type', value } })}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Branch">Branch</SelectItem>
+                      <SelectItem value="Warehouse">Warehouse</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={formData.from_id} onValueChange={(value) => handleChange({ target: { name: 'from_id', value } })} disabled={!formData.company}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={`Select ${formData.from_type}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(formData.from_type == 'Warehouse' ? warehouses : branches)
+                        .filter((item) => item.company_id === Number(formData.company))
+                        .map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {item.location} (ID: {item.id})
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-        {/* To Section */}
-        <div className="flex flex-col space-y-2">
-          <label className="text-gray-700 font-medium">Transfer To:</label>
-          <div className="flex space-x-4">
-            <select
-              name="to_type"
-              value={formData.to_type}
-              onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="Branch">Branch</option>
-              <option value="Warehouse">Warehouse</option>
-            </select>
-            <select
-              name="to_id"
-              value={formData.to_id}
-              onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.company}
-            >
-              <option value="">Select {formData.to_type}</option>
-              {(formData.to_type == 'Warehouse' ? warehouses : branches)
-                .filter((item) => item.company_id == Number(formData.company))
-                .map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.location} (ID: {item.id})
-                  </option>
-                ))}
-            </select>
-          </div>
-        </div>
+              {/* To Section */}
+              <div className="space-y-2">
+                <Label className="text-[#101023] font-medium">Transfer To:</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Select value={formData.to_type} onValueChange={(value) => handleChange({ target: { name: 'to_type', value } })}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Branch">Branch</SelectItem>
+                      <SelectItem value="Warehouse">Warehouse</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={formData.to_id} onValueChange={(value) => handleChange({ target: { name: 'to_id', value } })} disabled={!formData.company}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={`Select ${formData.to_type}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(formData.to_type == 'Warehouse' ? warehouses : branches)
+                        .filter((item) => item.company_id == Number(formData.company))
+                        .map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {item.location} (ID: {item.id})
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-        {/* Inventory and Quantity */}
-        <div className="flex flex-col space-y-2">
-          <h4 className="text-lg font-semibold text-gray-700">Product Details</h4>
-          <div className="flex space-x-4">
-            <select
-              name="inventory"
-              value={formData.inventory}
-              onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.from_id}
-            >
-              <option value="">Select Product</option>
-              {inventory.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {`${item.product_name}${item.product_weight ? ` - ${item.product_weight}` : ''} - $${item.retail_price} (Stock: ${item.quantity_in_stock})`}
-                </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              placeholder="Quantity"
-              min="1"
-              className="w-1/2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.inventory}
-            />
-          </div>
-        </div>
+              {/* Inventory and Quantity */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-lg font-semibold text-[#101023]">Product Details</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Product</Label>
+                    <Select value={formData.inventory} onValueChange={(value) => handleChange({ target: { name: 'inventory', value } })} disabled={!formData.from_id}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Product" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {inventory.map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {`${item.product_name}${item.product_weight ? ` - ${item.product_weight}` : ''} - $${item.retail_price} (Stock: ${item.quantity_in_stock})`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Quantity</Label>
+                    <Input
+                      type="number"
+                      value={formData.quantity}
+                      onChange={handleChange}
+                      placeholder="Quantity"
+                      min="1"
+                      className="w-full"
+                      disabled={!formData.inventory}
+                    />
+                  </div>
+                </div>
+              </div>
 
-        {/* Floor, Aisle, Side Selection */}
-        <div className="flex flex-col space-y-2">
-          <h4 className="text-lg font-semibold text-gray-700">Placement Details</h4>
-          <div className="flex space-x-4">
-            <select
-              name="floor"
-              value={formData.floor}
-              onChange={handleChange}
-              className="w-1/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.company}
-            >
-              <option value="">Select Floor</option>
-              {floors
-                .filter((floor) => floor.company === Number(formData.company))
-                .map((floor) => (
-                  <option key={floor.id} value={floor.id}>
-                    {`${floor.number} - ${floor.name || 'Unnamed'}`}
-                  </option>
-                ))}
-            </select>
-            <select
-              name="aisle"
-              value={formData.aisle}
-              onChange={handleChange}
-              className="w-1/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.floor}
-            >
-              <option value="">Select Aisle</option>
-              {filteredAisles.map((aisle) => (
-                <option key={aisle.id} value={aisle.id}>
-                  {`${aisle.number} - ${aisle.name || 'Unnamed'}`}
-                </option>
-              ))}
-            </select>
-            <select
-              name="side"
-              value={formData.side}
-              onChange={handleChange}
-              className="w-1/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={!formData.aisle}
-            >
-              <option value="">Select Side</option>
-              {filteredSides.map((side) => (
-                <option key={side.id} value={side.id}>
-                  {side.side}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+              {/* Floor, Aisle, Side Selection */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-lg font-semibold text-[#101023]">Placement Details</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Floor</Label>
+                    <Select value={formData.floor} onValueChange={(value) => handleChange({ target: { name: 'floor', value } })} disabled={!formData.company}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Floor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {floors
+                          .filter((floor) => floor.company === Number(formData.company))
+                          .map((floor) => (
+                            <SelectItem key={floor.id} value={floor.id}>
+                              {`${floor.number} - ${floor.name || 'Unnamed'}`}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Aisle</Label>
+                    <Select value={formData.aisle} onValueChange={(value) => handleChange({ target: { name: 'aisle', value } })} disabled={!formData.floor}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Aisle" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filteredAisles.map((aisle) => (
+                          <SelectItem key={aisle.id} value={aisle.id}>
+                            {`${aisle.number} - ${aisle.name || 'Unnamed'}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600">Side</Label>
+                    <Select value={formData.side} onValueChange={(value) => handleChange({ target: { name: 'side', value } })} disabled={!formData.aisle}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Side" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filteredSides.map((side) => (
+                          <SelectItem key={side.id} value={side.id}>
+                            {side.side}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full p-3 bg-green-500 text-white rounded-md hover:bg-green-600"
-        >
-          Transfer Inventory
-        </button>
-      </form>
+              {/* Submit Button */}
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  className="bg-green-500 text-white hover:bg-green-600"
+                >
+                  Transfer Inventory
+                </Button>
+              </div>
+            </form>
 
-      {/* Message Display */}
-      {message && (
-        <div
-          className={`mt-4 p-2 rounded-md text-center ${
-            message.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-          }`}
-        >
-          {message}
-        </div>
-      )}
+            {/* Message Display */}
+            {message && (
+              <div
+                className={`mt-4 p-2 rounded-md text-center ${
+                  message.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+                }`}
+              >
+                {message}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

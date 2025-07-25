@@ -4,8 +4,12 @@ import { verifyToken } from "/src/APIs/TokenAPIs";
 import { getCompanies, postWarehouses } from "/src/APIs/CompanyAPIs";
 import { useLocation, useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import { Button } from "../../additionalOriginuiComponents/ui/button";
+import { Input } from "../../additionalOriginuiComponents/ui/input";
+import { Label } from "../../additionalOriginuiComponents/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../../additionalOriginuiComponents/ui/card";
+import { Select as OriginSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../additionalOriginuiComponents/ui/select";
 
 const WarehouseForm = ({ mode = "add" }) => {
   const { state } = useLocation();
@@ -99,71 +103,76 @@ const WarehouseForm = ({ mode = "add" }) => {
   };
 
   return (
-    <div className="form-container">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-  <h2 className="form-heading">{mode === "add" ? "Add Warehouse" : "Edit Warehouse"}</h2>
-  <form className="company-form" onSubmit={handleSubmit}>
-    {user && user.is_superuser && (
+    <div className="min-h-screen bg-[#eaeaea] p-6">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#101023]">
+              {mode === "add" ? "Add Warehouse" : "Edit Warehouse"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {user && user.is_superuser && (
+                <div className="space-y-2">
+                  <Label htmlFor="company" className="text-[#101023] font-medium">Company</Label>
+                  <OriginSelect value={company} onValueChange={(value) => setCompany(value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Company" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companyOptions.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>{option.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </OriginSelect>
+                </div>
+              )}
 
-      <div className="form-group">
-        <label>Company:</label>
-        <select
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          required
-          className="form-input"
-          >
-          <option value="" disabled>
-            Select a Company
-          </option>
-          {companyOptions.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.name}
-            </option>
-          ))}
-        </select>
+              <div className="space-y-2">
+                <Label htmlFor="location" className="text-[#101023] font-medium">Location</Label>
+                <Input
+                  type="text"
+                  id="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="latitude, longitude"
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="address" className="text-[#101023] font-medium">Address</Label>
+                <textarea
+                  id="address"
+                  rows="3"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#423e7f] focus:border-transparent"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/warehouses')}
+                  className="bg-gray-200 text-[#101023] hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-[#423e7f] text-white hover:bg-[#201b50]"
+                >
+                  {mode === "add" ? "Add Warehouse" : "Update Warehouse"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-      )}
-
-
-    <div className="form-group">
-      <label>Location:</label>
-      <input
-        type="text"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        placeholder="latitude, longitude"
-        className="form-input"
-      />
     </div>
-
-    <div className="form-group">
-      <label>Address:</label>
-      <textarea
-        rows="3"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-        className="form-input"
-      />
-    </div>
-
-
-    <button type="submit" className="submit-button">
-      {mode === "add" ? "Add Warehouse" : "Update Warehouse"}
-    </button>
-  </form>
-</div>
-
   );
 };
 
